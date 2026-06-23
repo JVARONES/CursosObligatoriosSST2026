@@ -117,15 +117,15 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
   text-align:center;
 }
 .enc-titulo h2{
-  font-family:Arial,Helvetica,sans-serif;
-  font-size:13pt;font-weight:900;
+  font-family:Arial;
+  font-size:13pt;font-weight:600;
   text-transform:uppercase;line-height:1.35;
   color:#000;
 }
 .enc-codigo{
   font-size:7.5pt;line-height:1.8;
   padding:0 0 0 8px;
-  text-align:right;
+  text-align:left;
   white-space:nowrap;
   align-self:flex-start;
   padding-top:2px;
@@ -623,7 +623,6 @@ async function descargarPDF(){
   const{jsPDF}=window.jspdf;
   try{
     const canvas=await html2canvas(el,{scale:3,useCORS:true,backgroundColor:'#ffffff',logging:false,width:794});
-    const{jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const pW=210,pH=297;
     const totalPags=filtrados.length>30?2:1;
