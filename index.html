@@ -687,9 +687,9 @@ function dibujarPagina(pdf,o){
   pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);tc(BK);
   const cx=pw-mr; // borde derecho
 pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
-  pdf.text('VERSIÓN: 01',cx,y+5.5,{align:'right'});
-  pdf.text('FECHA: 2024-12-11',cx,y+9,{align:'right'});
-  pdf.text(`Página: ${o.pg} de ${o.totalPags}`,cx,y+12.5,{align:'right'});
+  pdf.text('VERSIÓN: 01',cx,y+3.5,{align:'right'});
+  pdf.text('FECHA: 2024-12-11',cx,y+7,{align:'right'});
+  pdf.text(`Página: ${o.pg} de ${o.totalPags}`,cx,y+10.5,{align:'right'});
   y+=22;
 
   pdf.setLineWidth(0.3);
