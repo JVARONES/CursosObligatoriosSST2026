@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Inducción – INDRA PERÚ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --indra:#004254;--indra2:#003344;--gray-bg:#E4E3DA;
+  --navy:#0d1b2a;--blue:#1e6fbf;--accent:#e85d04;
+  --gray-100:#f0f4f8;--gray-200:#dde4ed;--gray-400:#8fa5be;--gray-600:#4a6282;
+  --white:#fff;--success:#1a7f5a;--radius:10px;
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--navy);min-height:100vh}
+header{background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--accent)}
+.logo-box{width:42px;height:42px;background:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:8px;color:var(--navy);text-align:center;line-height:1.2;flex-shrink:0}
+header h1{color:#fff;font-size:15px;font-weight:600}
+header p{color:var(--gray-400);font-size:11px;margin-top:2px}
+.app{max-width:1080px;margin:0 auto;padding:22px 16px 60px}
+.panel{background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200);margin-bottom:16px;overflow:hidden}
+.panel-header{background:var(--indra);color:#fff;padding:10px 16px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px}
+.step{background:var(--accent);color:#fff;width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.panel-body{padding:16px}
+.upload-zone{border:2px dashed var(--gray-200);border-radius:var(--radius);padding:28px 18px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gray-100)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--blue);background:#e8f2fc}
+.upload-zone svg{width:34px;height:34px;color:var(--blue);margin-bottom:8px}
+.upload-zone p{font-size:13px;color:var(--gray-600)}.upload-zone strong{color:var(--blue)}
+#fileInput{display:none}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge.ok{background:#d1fae5;color:var(--success)}.badge.info{background:#dbeafe;color:var(--blue)}
+.fg{display:flex;flex-direction:column;gap:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.full{grid-column:1/-1}
+label{font-size:11px;font-weight:600;color:var(--gray-600);letter-spacing:.2px}
+input,select,textarea{font-family:'Inter',sans-serif;font-size:13px;border:1.5px solid var(--gray-200);border-radius:7px;padding:7px 10px;background:#fff;color:var(--navy);transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,191,.1)}
+.corr-row{display:flex;align-items:center;gap:9px}
+.corr-disp{font-family:monospace;font-size:20px;font-weight:600;color:var(--blue);background:#f0f6ff;border:2px solid #90c0e8;border-radius:7px;padding:6px 14px;letter-spacing:1px;min-width:110px;text-align:center}
+.btn-sm{padding:4px 10px;font-size:12px;font-weight:600;border:none;border-radius:5px;cursor:pointer}
+.btn-ol{background:transparent;border:1.5px solid var(--gray-200);color:var(--gray-600)}
+.btn-ol:hover{border-color:var(--blue);color:var(--blue)}
+.tipo-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:3px}
+.tipo-chk{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px}
+.tipo-chk input{width:13px;height:13px;accent-color:var(--blue)}
+.btn-p{background:var(--blue);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-p:hover{background:#155fa0}.btn-p:disabled{background:var(--gray-400);cursor:not-allowed}
+.btn-a{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-a:hover{background:#c44d02}.btn-a:disabled{background:var(--gray-400);cursor:not-allowed}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.info-box{background:#f0f6ff;border-left:3px solid var(--blue);border-radius:0 7px 7px 0;padding:10px 14px;font-size:12px;color:var(--navy);margin-top:10px;line-height:1.6}
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table.ui-t{width:100%;border-collapse:collapse;font-size:12px}
+table.ui-t thead tr{background:var(--indra);color:#fff}
+table.ui-t thead th{padding:8px 7px;font-weight:600;text-align:left}
+table.ui-t tbody tr{border-bottom:1px solid var(--gray-200)}
+table.ui-t tbody tr:hover{background:#f5f9ff}
+table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
+.area-tag{background:#e0eaf8;color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px}
+.date-tag{background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:10px;font-family:monospace}
+.pb-wrap{background:var(--gray-200);border-radius:6px;height:5px;margin-top:7px;overflow:hidden}
+.pb{height:100%;background:var(--blue);border-radius:6px;transition:width .3s}
+.empty{text-align:center;padding:32px 18px;color:var(--gray-400);font-size:13px}
+
+/* ══ MODAL ══ */
+#fPreview{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;overflow-y:auto;padding:14px}
+.p-inner{background:#fff;max-width:900px;margin:0 auto;border-radius:7px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.p-toolbar{background:var(--indra);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.p-toolbar span{color:#fff;font-size:13px;font-weight:600}
+.tbtn{background:transparent;border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:5px;padding:5px 12px;font-size:12px;cursor:pointer}
+.tbtn:hover{background:rgba(255,255,255,.12)}
+.tbtn.dl{background:var(--accent);border-color:var(--accent);font-weight:600}
+.tbtn.dl:hover{background:#c44d02}
+
+/* ══════════════════════════════════════════
+   FORMATO REGISTRO — RÉPLICA EXACTA DEL PDF
+   ══════════════════════════════════════════ */
+#regContent{background:#fff;padding:0}
+
+.reg-page{
+  width:794px; /* A4 a 96dpi */
+  min-height:1123px;
+  padding:18px 20px 18px 20px;
+  background:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:8pt;
+  color:#000;
+  page-break-after:always;
+  position:relative;
+}
+.reg-page:last-child{page-break-after:auto}
+
+/* ── Encabezado ── */
+/* ENCABEZADO — sin bordes, logo izq, título centro, código arriba derecha */
+.enc{
+  display:grid;
+  grid-template-columns:160px 1fr 180px;
+  align-items:center;
+  width:100%;
+  border:none;
+  margin-bottom:10px;
+  min-height:80px;
+}
+.enc-logo{
+  display:flex;align-items:center;justify-content:flex-start;
+  padding:4px 8px 4px 0;
+}
+.enc-logo svg{width:120px}
+.enc-titulo{
+  display:flex;align-items:center;justify-content:center;
+  padding:4px 16px;
+  text-align:center;
+}
+.enc-titulo h2{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:13pt;font-weight:900;
+  text-transform:uppercase;line-height:1.35;
+  color:#000;
+}
+.enc-codigo{
+  font-size:7.5pt;line-height:1.8;
+  padding:0 0 0 8px;
+  text-align:right;
+  white-space:nowrap;
+  align-self:flex-start;
+  padding-top:2px;
+}
+
+/* ── Tabla principal ── */
+.rt{
+  width:100%;
+  border-collapse:collapse;
+  border:1.5px solid #000;
+}
+.rt td,.rt th{
+  border:1px solid #000;
+  padding:3px 5px;
+  vertical-align:middle;
+  font-size:7.5pt;
+}
+/* Fondo azul oscuro INDRA */
+.faz{background:#004254;color:#fff;font-weight:700;text-align:center;font-size:8pt}
+/* Fondo gris header */
+.fgr{background:#E4E3DA;font-weight:700;font-size:7pt}
+.fgr-c{background:#E4E3DA;font-weight:700;font-size:7pt;text-align:center}
+/* Centrado */
+.tc{text-align:center}
+/* Bold */
+.tb{font-weight:700}
+/* Fila participante */
+.pr td{height:15px;font-size:7.5pt;padding:1px 4px}
+.pr-n{text-align:center;color:#666;font-size:7pt;width:20px}
+/* Responsable labels */
+.rl{background:#E4E3DA;font-weight:700;font-size:7.5pt;width:35%}
+/* Firma */
+.fr-cell{height:48px;vertical-align:top;padding-top:4px}
+.toast{position:fixed;bottom:20px;right:20px;background:#0d1b2a;color:#fff;padding:10px 16px;border-radius:7px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:6px;animation:sli .3s ease}
+.toast.success{background:#1a7f5a}.toast.error{background:#c0392b}
+@keyframes sli{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-box">INDRA<br>GROUP</div>
+  <div>
+    <h1>Registro de Inducción, Capacitación y Entrenamiento</h1>
+    <p>SGSST_INDRAGROUP_F 022 · Versión 01 · 2024-12-11</p>
+  </div>
+</header>
+
+<div class="app">
+
+<!-- PASO 1 -->
+<div class="panel">
+  <div class="panel-header"><div class="step">1</div>Cargar Excel de capacitaciones</div>
+  <div class="panel-body">
+    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l3-3m0 0l3 3m-3-3v7.5M6 20.25h12A2.25 2.25 0 0020.25 18V9a2.25 2.25 0 00-.659-1.591l-4.5-4.5A2.25 2.25 0 0013.5 2.25H6A2.25 2.25 0 003.75 4.5v13.5A2.25 2.25 0 006 20.25z"/></svg>
+      <p>Arrastra tu Excel aquí o <strong>haz clic para seleccionar</strong></p>
+      <p style="font-size:11px;margin-top:4px;color:#aaa">.xlsx · .xlsm · .xls</p>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xlsm,.xls">
+    <div id="uploadStatus" style="margin-top:9px;display:none">
+      <span class="badge ok" id="uploadBadge">✓</span>
+      <span style="font-size:12px;color:#4a6282;margin-left:6px" id="uploadInfo"></span>
+      <div class="pb-wrap"><div class="pb" id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 2 -->
+<div class="panel">
+  <div class="panel-header"><div class="step">2</div>Configurar datos del registro</div>
+  <div class="panel-body">
+    <div class="grid3" style="margin-bottom:12px">
+      <div class="fg">
+        <label>N° CORRELATIVO</label>
+        <div class="corr-row">
+          <div class="corr-disp" id="corrDisplay">001</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <input type="number" id="corrManual" min="1" max="9999" placeholder="Manual" style="width:74px;font-family:monospace">
+            <button class="btn-sm btn-ol" onclick="aplicarCorrelativoManual()">Usar</button>
+          </div>
+        </div>
+        <span style="font-size:11px;color:#8fa5be;margin-top:3px">Siguiente: <span id="siguienteNum" style="color:#1e6fbf;font-weight:600">002</span></span>
+      </div>
+      <div class="fg"><label>AÑO</label><input type="number" id="anioReg" value="2026" min="2020" max="2099"></div>
+      <div class="fg"><label>N° TRABAJADORES EN EL CENTRO</label><input type="text" id="numTrab" value="--"></div>
+    </div>
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="fg"><label>FECHA DE CAPACITACIÓN</label><input type="date" id="fechaCapacitacion" onchange="filtrarPorFecha()"></div>
+      <div class="fg"><label>N° HORAS</label><input type="number" id="numHoras" value="2" min="0.5" step="0.5"></div>
+    </div>
+    <div class="fg full" style="margin-bottom:11px">
+      <label>TEMA</label>
+      <textarea id="temaCap" rows="3">Módulo I: IDENTIFICACIÓN DE PELIGROS Y EVALUACIÓN DE RIESGOS.
+Módulo II: RESPUESTA ANTE EMERGENCIAS (LCI, PA, Ev).
+Módulo III: ERGONOMÍA EN EL TRABAJO Y TELETRABAJO.
+Módulo IV: RIESGOS PSICOSOCIALES.</textarea>
+    </div>
+    <div class="fg full" style="margin-bottom:11px">
+      <label>NOMBRE DEL CAPACITADOR / ENTRENADOR</label>
+      <input type="text" id="capacitador" value="Ing. Marcia Cárdenas Medina - Supervisor Principal SST / Med. Liliana Aparcana Jacobo - Médico Ocupacional">
+    </div>
+    <div class="fg full" style="margin-bottom:11px">
+      <label>TIPO DE CAPACITACIÓN</label>
+      <div class="tipo-row">
+        <label class="tipo-chk"><input type="checkbox" id="tipoIn"> Inducción</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoCap" checked> Capacitación</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoEnt"> Entrenamiento</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoSim"> Simulacro de emergencias</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoOt"> Otros</label>
+        <label class="tipo-chk" style="margin-left:10px"><input type="checkbox" id="tipoVirt" checked> Virtual</label>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="fg"><label>RESPONSABLE — NOMBRE</label><input type="text" id="respNom" value="Joe Vincent Arones Rocha"></div>
+      <div class="fg"><label>RESPONSABLE — CARGO</label><input type="text" id="respCar" value="Practicante Profesional de SST"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 3 -->
+<div class="panel">
+  <div class="panel-header">
+    <div class="step">3</div>Participantes para la fecha seleccionada
+    <span id="contP" class="badge info" style="margin-left:auto">0 encontrados</span>
+  </div>
+  <div class="panel-body">
+    <div id="tablaP"><div class="empty">Carga un Excel y selecciona una fecha de capacitación.</div></div>
+    <div class="btn-row">
+      <button class="btn-p" onclick="generarFormato()" id="btnGen" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        Vista previa del registro
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div id="fPreview">
+  <div class="p-inner">
+    <div class="p-toolbar">
+      <span id="prevTitle">Registro</span>
+      <div style="display:flex;gap:7px">
+        <button class="tbtn dl" onclick="descargarPDF()">⬇ Descargar PDF</button>
+        <button class="tbtn" onclick="cerrarPrev()">✕ Cerrar</button>
+      </div>
+    </div>
+    <div id="regContent"></div>
+  </div>
+</div>
+
+<script>
+// ══ ESTADO ══
+let todos=[], filtrados=[];
+const SK='indra_corr_v3';
+
+// ══ CORRELATIVO ══
+const getC=()=>parseInt(localStorage.getItem(SK)||'1');
+const setC=n=>{localStorage.setItem(SK,String(n));rendC()};
+function rendC(){
+  const n=getC();
+  document.getElementById('corrDisplay').textContent=String(n).padStart(3,'0');
+  document.getElementById('siguienteNum').textContent=String(n+1).padStart(3,'0');
+  document.getElementById('corrManual').value='';
+}
+function aplicarCorrelativoManual(){
+  const v=parseInt(document.getElementById('corrManual').value);
+  if(!v||v<1){toast('Número inválido','error');return}
+  setC(v);toast(`Correlativo → ${String(v).padStart(3,'0')} IP`,'success');
+}
+rendC();
+document.getElementById('corrManual').addEventListener('keydown',e=>{if(e.key==='Enter')aplicarCorrelativoManual()});
+
+// ══ DRAG & DROP ══
+const dz=document.getElementById('dropZone');
+['dragover','dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{
+  e.preventDefault();
+  if(ev==='dragover')dz.classList.add('drag');
+  else if(ev==='dragleave')dz.classList.remove('drag');
+  else{dz.classList.remove('drag');if(e.dataTransfer.files[0])leerExcel(e.dataTransfer.files[0])}
+}));
+document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])leerExcel(e.target.files[0])});
+
+// ══ LEER EXCEL ══
+function leerExcel(file){
+  const r=new FileReader();
+  r.onload=function(e){
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      let found=false;
+      for(const sh of wb.SheetNames){
+        const ws=wb.Sheets[sh];
+        if(!ws||!ws['!ref'])continue;
+        const rows=XLSX.utils.sheet_to_json(ws,{defval:null,raw:true,cellDates:true});
+        if(rows.length<2)continue;
+        const keys=Object.keys(rows[0]);
+        const muestra=rows.slice(0,30);
+
+        // Detectar columnas de fecha
+        const fechaCols=new Set();
+        muestra.forEach(row=>keys.forEach(k=>{
+          const v=row[k];
+          if(v instanceof Date&&!isNaN(v))fechaCols.add(k);
+          else if(typeof v==='number'&&v>=30000&&v<=60000)fechaCols.add(k);
+          else if(typeof v==='string'&&pFecha(v.trim()))fechaCols.add(k);
+        }));
+
+        // Detectar nombre (string largo con coma/espacio)
+        const colNom=keys.find(k=>{
+          if(fechaCols.has(k))return false;
+          const vs=muestra.map(r=>r[k]).filter(v=>v&&typeof v==='string');
+          return vs.filter(v=>v.length>8&&(v.includes(',')||v.includes(' '))&&!/^\d/.test(v)).length>=muestra.length*.4;
+        })||keys[0];
+
+        // Detectar DNI (7-9 dígitos)
+        const colDni=keys.find(k=>{
+          if(k===colNom||fechaCols.has(k))return false;
+          const vs=muestra.map(r=>String(r[k]||'').replace(/^'+/,'').trim());
+          return vs.filter(v=>/^\d{7,9}$/.test(v)).length>=muestra.length*.3;
+        })||null;
+
+        // Texto: área y cargo
+        const excl=new Set([colNom,colDni,...fechaCols].filter(Boolean));
+        const colsT=keys.filter(k=>{
+          if(excl.has(k))return false;
+          const vs=muestra.map(r=>String(r[k]||'').trim()).filter(v=>v&&v!=='null');
+          return vs.filter(v=>v.length>1&&v.length<60&&/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(v)&&!/^(ACTIVO|INACTIVO|SI|NO)$/i.test(v)).length>=muestra.length*.3;
+        });
+        const colA=colsT[0]||null, colCar=colsT[1]||null;
+        const colsFecha=[...fechaCols].filter(k=>k!==colNom&&k!==colDni);
+
+        const colabs=[];
+        for(const row of rows){
+          const nom=String(row[colNom]||'').trim().replace(/^'+/,'');
+          if(!nom||nom.length<3)continue;
+          const fechas=colsFecha.map(cf=>{
+            const v=row[cf];
+            if(!v&&v!==0)return null;
+            if(v instanceof Date&&!isNaN(v))return new Date(v.getUTCFullYear(),v.getUTCMonth(),v.getUTCDate());
+            if(typeof v==='number'&&v>=30000&&v<=60000){
+              const b=new Date(1899,11,30),d=new Date(b.getTime()+v*86400000);
+              return new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());
+            }
+            return pFecha(String(v).trim());
+          }).filter(Boolean);
+          if(!fechas.length)continue;
+          const fr=new Date(Math.max(...fechas.map(d=>d.getTime())));
+          fr.setHours(0,0,0,0);
+          colabs.push({
+            nom,
+            dni:colDni?String(row[colDni]||'').replace(/^'+/,'').trim():'',
+            area:colA?String(row[colA]||'').trim():'',
+            cargo:colCar?String(row[colCar]||'').trim():'',
+            fr,fk:toYMD(fr)
+          });
+        }
+        if(colabs.length>0){
+          todos=colabs;found=true;
+          document.getElementById('uploadStatus').style.display='block';
+          document.getElementById('uploadBadge').textContent='✓ '+file.name;
+          const fu=[...new Set(colabs.map(c=>c.fk))].filter(Boolean).sort().reverse();
+          const fl=fu.slice(0,8).map(f=>{const[y,m,d]=f.split('-');return`${d}/${m}/${y}`}).join(' · ');
+          document.getElementById('uploadInfo').innerHTML=
+            `${colabs.length} colaboradores`+(fl?` · <span style="color:#e85d04;font-weight:600">Fechas: ${fl}</span>`:'');
+          animPb();toast(`${colabs.length} colaboradores cargados`,'success');
+          filtrarPorFecha();break;
+        }
+      }
+      if(!found)toast('No se reconocieron datos en el archivo.','error');
+    }catch(err){console.error(err);toast('Error: '+err.message,'error')}
+  };
+  r.readAsArrayBuffer(file);
+}
+
+function pFecha(s){
+  if(!s)return null;
+  let m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m){const d=new Date(+m[3],+m[2]-1,+m[1]);d.setHours(0,0,0,0);return d}
+  m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m){const d=new Date(+m[1],+m[2]-1,+m[3]);d.setHours(0,0,0,0);return d}
+  return null;
+}
+const toYMD=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:'';
+const fmtD=d=>d?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`:'';
+function animPb(){let w=0;const b=document.getElementById('progressBar');const iv=setInterval(()=>{w=Math.min(w+9,100);b.style.width=w+'%';if(w>=100)clearInterval(iv)},25)}
+
+// ══ FILTRAR ══
+function filtrarPorFecha(){
+  const fi=document.getElementById('fechaCapacitacion').value;
+  const tb=document.getElementById('tablaP'), btn=document.getElementById('btnGen');
+  if(!todos.length)return;
+  if(!fi){tb.innerHTML='<div class="empty">Selecciona una fecha de capacitación.</div>';return}
+  const[y,m,d]=fi.split('-').map(Number);
+  const bStr=`${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
+  filtrados=todos.filter(c=>c.fk===fi).sort((a,b)=>a.nom.localeCompare(b.nom,'es'));
+  document.getElementById('contP').textContent=`${filtrados.length} encontrados`;
+  if(!filtrados.length){
+    tb.innerHTML=`<div class="empty">Ningún colaborador tiene capacitación el <strong>${bStr}</strong>.</div>`;
+    btn.disabled=true;return;
+  }
+  let h=`<div class="tbl-wrap"><table class="ui-t"><thead><tr><th>#</th><th>Apellidos y Nombres</th><th>DNI</th><th>Área</th><th>Cargo</th><th>Fecha</th></tr></thead><tbody>`;
+  filtrados.forEach((c,i)=>h+=`<tr><td style="font-size:10px;color:#8fa5be">${String(i+1).padStart(2,'0')}</td><td><strong>${c.nom}</strong></td><td style="font-family:monospace;font-size:11px">${c.dni}</td><td><span class="area-tag">${c.area}</span></td><td style="font-size:11px;color:#4a6282">${c.cargo}</td><td><span class="date-tag">${fmtD(c.fr)}</span></td></tr>`);
+  h+='</tbody></table></div>';
+  const p1=Math.min(filtrados.length,30),p2=Math.max(filtrados.length-30,0);
+  h+=`<div class="info-box"><strong>Páginas:</strong> ${filtrados.length<=30?`1 página (${p1} participantes)`:`2 páginas · Pág 1: 30 · Pág 2: ${p2}`} · Total: <strong>${filtrados.length}</strong></div>`;
+  tb.innerHTML=h;btn.disabled=false;
+}
+
+// ══ LOGO SVG INDRA ══
+const LOGO=`<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Símbolo X INDRA -->
+  <g fill="#004254">
+    <!-- X izquierda arriba-->
+    <polygon points="4,8 22,8 40,38 58,8 76,8 50,50 76,92 58,92 40,62 22,92 4,92 30,50"/>
+    <!-- INDRA texto -->
+    <rect x="86" y="8" width="8" height="42"/>
+    <polygon points="98,8 106,8 124,34 124,8 132,8 132,50 124,50 106,24 106,50 98,50"/>
+    <path d="M137,8 h8 v42 h-8 z"/>
+    <path d="M150,8 h18 a13,13 0 0 1 0,26 h-10 v16 h-8 z M158,16 v12 h10 a6,6 0 0 0 0,-12 z"/>
+    <path d="M183,8 h14 a13,13 0 0 1 0,26 h-4 l12,16 h-10 l-11,-16 h-1 v16 h-8 z M191,16 v12 h6 a6,6 0 0 0 0,-12 z"/>
+    <!-- GROUP texto -->
+    <text x="86" y="88" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="14" letter-spacing="3.5" fill="#004254">GROUP</text>
+  </g>
+</svg>`;
+
+// ══ GENERAR FORMATO ══
+function generarFormato(){
+  const corrN=getC();
+  const corrStr=String(corrN).padStart(3,'0')+' IP';
+  const anio=document.getElementById('anioReg').value;
+  const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
+  const fi=document.getElementById('fechaCapacitacion').value;
+  const[fy,fm,fd]=fi.split('-').map(Number);
+  const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
+  const tema=document.getElementById('temaCap').value;
+  const cap=document.getElementById('capacitador').value;
+  const horas=document.getElementById('numHoras').value;
+  const numT=document.getElementById('numTrab').value;
+  const rNom=document.getElementById('respNom').value;
+  const rCar=document.getElementById('respCar').value;
+  const virt=document.getElementById('tipoVirt').checked;
+  const vl=virt?' (VIRTUAL)':'';
+  const xIn=document.getElementById('tipoIn').checked?'X'+vl:'';
+  const xCap=document.getElementById('tipoCap').checked?'X'+vl:'';
+  const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
+  const xSim=document.getElementById('tipoSim').checked?'X':'';
+  const xOt=document.getElementById('tipoOt').checked?'X':'';
+  const totalPags=filtrados.length>30?2:1;
+
+  document.getElementById('prevTitle').textContent=`Registro ${numReg} · ${corrStr}`;
+  const cont=document.getElementById('regContent');cont.innerHTML='';
+
+  for(let pg=1;pg<=totalPags;pg++){
+    const grupo=[...filtrados.slice((pg-1)*30,pg*30)];
+    while(grupo.length<30)grupo.push(null);
+
+    let filas='';
+    grupo.forEach((c,i)=>{
+      const n=(pg-1)*30+i+1;
+      filas+=`<tr class="pr">
+        <td class="pr-n">${n}</td>
+        <td>${c?c.nom:''}</td>
+        <td class="tc" style="font-size:7pt">${c?c.dni:''}</td>
+        <td>${c?c.area:''}</td>
+        <td></td>
+        <td>${c?c.cargo:''}</td>
+      </tr>`;
+    });
+
+    cont.insertAdjacentHTML('beforeend',`
+    <div class="reg-page">
+
+      <!-- ENCABEZADO -->
+      <div class="enc">
+        <div class="enc-logo">${LOGO}</div>
+        <div class="enc-titulo">
+          <h2>REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO<br>Y SIMULACRO DE EMERGENCIA</h2>
+        </div>
+        <div class="enc-codigo">
+          CÓDIGO: SGSST_INDRAGROUP_F 022<br>
+          VERSIÓN: 01<br>
+          FECHA: 2024-12-11<br>
+          Página: ${pg} de ${totalPags}
+        </div>
+      </div>
+
+      <!-- CUERPO -->
+      <table class="rt">
+        <colgroup>
+          <col style="width:60px">
+          <col style="width:110px">
+          <col style="width:19%">
+          <col style="width:19%">
+          <col style="width:19%">
+          <col style="width:14%">
+        </colgroup>
+
+        <!-- N° Registro + título azul -->
+        <tr>
+          <td class="fgr" style="font-size:7pt;line-height:1.3">N°<br>REGISTRO</td>
+          <td class="tb">${numReg}</td>
+          <td colspan="4" class="faz" style="font-size:8.5pt">REGISTRO DE INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACROS DE EMERGENCIA</td>
+        </tr>
+        <!-- Datos empleador label -->
+        <tr><td colspan="6" class="fgr tb" style="padding:2px 5px">DATOS DEL EMPLEADOR</td></tr>
+        <!-- Datos empleados azul -->
+        <tr><td colspan="6" class="faz">DATOS DEL EMPLEADOS PRINCIPAL</td></tr>
+        <!-- Headers empresa -->
+        <tr>
+          <td class="fgr-c">RAZÓN SOCIAL</td>
+          <td class="fgr-c">RUC</td>
+          <td class="fgr-c">DOMICILIO (Dirección, distrito, departamento, provincia)</td>
+          <td class="fgr-c">TIPO DE ACTIVIDAD ECONÓMICA</td>
+          <td class="fgr-c" colspan="2">N° TRABAJADORES EN EL CENTRO LABORAL</td>
+        </tr>
+        <!-- Datos empresa -->
+        <tr>
+          <td class="tc">INDRA PERÚ S.A.</td>
+          <td class="tc">20100123411</td>
+          <td class="tc" style="font-size:7pt">AV. JORGE BASADRE NRO. 233 INT. 901 (ALT.CUADRA 01 JAVIER PRADO OESTE) LIMA - LIMA - SAN ISIDRO</td>
+          <td class="tc" style="font-size:7pt">ACTIVIDADES DE CONSULTORÍA DE GESTIÓN.</td>
+          <td class="tc" colspan="2">${numT}</td>
+        </tr>
+        <!-- MARCAR X -->
+        <tr><td colspan="6" class="fgr-c" style="padding:2px">MARCAR (X)</td></tr>
+        <tr>
+          <td class="fgr-c">INDUCCIÓN</td>
+          <td class="fgr-c" colspan="2">CAPACITACIÓN</td>
+          <td class="fgr-c">ENTRENAMIENTO</td>
+          <td class="fgr-c">SIMULACRO DE EMERGENCIAS</td>
+          <td class="fgr-c">OTROS</td>
+        </tr>
+        <tr>
+          <td class="tc tb">${xIn}</td>
+          <td class="tc tb" colspan="2">${xCap}</td>
+          <td class="tc tb">${xEnt}</td>
+          <td class="tc tb">${xSim}</td>
+          <td class="tc tb">${xOt}</td>
+        </tr>
+        <!-- Tema -->
+        <tr>
+          <td class="fgr tb" colspan="1">TEMA:</td>
+          <td colspan="5" style="font-size:7.5pt;white-space:pre-line;line-height:1.6;padding:4px 5px">${tema}</td>
+        </tr>
+        <!-- Fecha y horas -->
+        <tr>
+          <td class="fgr tb">FECHA:</td>
+          <td class="tb">${fechaStr}</td>
+          <td colspan="2"></td>
+          <td class="fgr-c tb">N° HORAS</td>
+          <td class="tc tb">${horas}</td>
+        </tr>
+        <!-- Capacitador -->
+        <tr>
+          <td class="fgr tb" colspan="1" style="font-size:6.5pt;line-height:1.3">NOMBRE DEL CAPACITADOR O ENTRENADOR:</td>
+          <td colspan="5" class="tc" style="font-size:7.5pt">${cap}</td>
+        </tr>
+        <!-- Headers participantes -->
+        <tr>
+          <th class="fgr-c">N°</th>
+          <th class="fgr-c" style="width:34%">APELLIDOS Y NOMBRES DE LOS CAPACITADOS</th>
+          <th class="fgr-c" style="width:11%">N°DNI</th>
+          <th class="fgr-c" style="width:13%">ÁREA</th>
+          <th class="fgr-c" style="width:13%">FIRMA</th>
+          <th class="fgr-c">OBSERVACIONES.<br>(CARGO)</th>
+        </tr>
+        ${filas}
+        <!-- Responsable -->
+        <tr><td colspan="6" class="faz" style="font-size:8pt">RESPONSABLE DEL REGISTRO</td></tr>
+        <tr>
+          <td colspan="2" class="rl">Nombre y Apellidos:</td>
+          <td colspan="4" class="tc">${rNom}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="rl">Cargo:</td>
+          <td colspan="4" class="tc">${rCar}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="rl">Fecha:</td>
+          <td colspan="4" class="tc">${fechaStr}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="rl fr-cell">Firma:</td>
+          <td colspan="4" class="fr-cell"></td>
+        </tr>
+      </table>
+    </div>`);
+  }
+
+  document.getElementById('fPreview').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+function cerrarPrev(){
+  document.getElementById('fPreview').style.display='none';
+  document.body.style.overflow='';
+}
+
+// ══ DESCARGAR PDF ══
+async function descargarPDF(){
+  const corrN=getC();
+  const corrStr=String(corrN).padStart(3,'0')+' IP';
+  const fi=document.getElementById('fechaCapacitacion').value;
+  const[y,m,d]=fi.split('-').map(Number);
+  const fn=`${String(d).padStart(2,'0')}-${String(m).padStart(2,'0')}-${y}_${corrStr}.pdf`;
+  toast('Generando PDF…');
+  const el=document.getElementById('regContent');
+  const{jsPDF}=window.jspdf;
+  try{
+    const canvas=await html2canvas(el,{scale:3,useCORS:true,backgroundColor:'#ffffff',logging:false,width:794});
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pW=210,pH=297;
+    const totalPags=filtrados.length>30?2:1;
+    const pgHpx=canvas.height/totalPags;
+    for(let pg=0;pg<totalPags;pg++){
+      if(pg>0)pdf.addPage();
+      const sc=document.createElement('canvas');
+      sc.width=canvas.width;sc.height=pgHpx;
+      sc.getContext('2d').drawImage(canvas,0,pg*pgHpx,canvas.width,pgHpx,0,0,canvas.width,pgHpx);
+      const hMM=(pgHpx/canvas.width)*pW*(canvas.width/(794*3))*794*3/canvas.width*pW;
+      pdf.addImage(sc.toDataURL('image/jpeg',.97),'JPEG',0,0,pW,Math.min((pgHpx/(canvas.width))*pW*(3),pH));
+    }
+    pdf.save(fn);
+    setC(corrN+1);
+    toast(`PDF guardado: ${fn}`,'success');
+  }catch(err){console.error(err);toast('Error al generar PDF','error')}
+}
+
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${{success:'✓',error:'✕',info:'ℹ'}[type]}</span> ${msg}`;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+</script>
+</body>
+</html>
