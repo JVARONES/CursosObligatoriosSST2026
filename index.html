@@ -612,33 +612,237 @@ function cerrarPrev(){
 }
 
 // ══ DESCARGAR PDF ══
+// ══ DESCARGAR PDF — jsPDF nativo ══
 async function descargarPDF(){
   const corrN=getC();
   const corrStr=String(corrN).padStart(3,'0')+' IP';
+  const anio=document.getElementById('anioReg').value;
+  const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
   const fi=document.getElementById('fechaCapacitacion').value;
-  const[y,m,d]=fi.split('-').map(Number);
-  const fn=`${String(d).padStart(2,'0')}-${String(m).padStart(2,'0')}-${y}_${corrStr}.pdf`;
+  const[fy,fm,fd]=fi.split('-').map(Number);
+  const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
+  const fn=`${String(fd).padStart(2,'0')}-${String(fm).padStart(2,'0')}-${fy}_${corrStr}.pdf`;
+  const tema=document.getElementById('temaCap').value;
+  const cap=document.getElementById('capacitador').value;
+  const horas=document.getElementById('numHoras').value;
+  const numT=document.getElementById('numTrab').value;
+  const rNom=document.getElementById('respNom').value;
+  const rCar=document.getElementById('respCar').value;
+  const virt=document.getElementById('tipoVirt').checked;
+  const vl=virt?' (VIRTUAL)':'';
+  const xIn=document.getElementById('tipoIn').checked?'X'+vl:'';
+  const xCap=document.getElementById('tipoCap').checked?'X'+vl:'';
+  const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
+  const xSim=document.getElementById('tipoSim').checked?'X':'';
+  const xOt=document.getElementById('tipoOt').checked?'X':'';
+  const totalPags=filtrados.length>30?2:1;
   toast('Generando PDF…');
-  const el=document.getElementById('regContent');
-  const{jsPDF}=window.jspdf;
   try{
-    const canvas=await html2canvas(el,{scale:3,useCORS:true,backgroundColor:'#ffffff',logging:false,width:794});
+    const{jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const pW=210,pH=297;
-    const totalPags=filtrados.length>30?2:1;
-    const pgHpx=canvas.height/totalPags;
-    for(let pg=0;pg<totalPags;pg++){
-      if(pg>0)pdf.addPage();
-      const sc=document.createElement('canvas');
-      sc.width=canvas.width;sc.height=pgHpx;
-      sc.getContext('2d').drawImage(canvas,0,pg*pgHpx,canvas.width,pgHpx,0,0,canvas.width,pgHpx);
-      const hMM=(pgHpx/canvas.width)*pW*(canvas.width/(794*3))*794*3/canvas.width*pW;
-      pdf.addImage(sc.toDataURL('image/jpeg',.97),'JPEG',0,0,pW,Math.min((pgHpx/(canvas.width))*pW*(3),pH));
+    for(let pg=1;pg<=totalPags;pg++){
+      if(pg>1) pdf.addPage();
+      const grupo=[...filtrados.slice((pg-1)*30,pg*30)];
+      while(grupo.length<30) grupo.push(null);
+      dibujarPagina(pdf,{pg,totalPags,numReg,corrStr,fechaStr,tema,cap,horas,numT,
+        rNom,rCar,xIn,xCap,xEnt,xSim,xOt,grupo});
     }
     pdf.save(fn);
     setC(corrN+1);
     toast(`PDF guardado: ${fn}`,'success');
-  }catch(err){console.error(err);toast('Error al generar PDF','error')}
+  }catch(err){console.error(err);toast('Error al generar PDF: '+err.message,'error')}
+}
+
+function dibujarPagina(pdf,o){
+  const AZ='#004254',GR='#E4E3DA',BK='#000000',WH='#FFFFFF';
+  const ml=8,mr=8,mt=8,pw=210,tw=210-8-8;
+  const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+  const fill=c=>{const[r,g,b]=hex2rgb(c);pdf.setFillColor(r,g,b)};
+  const stroke=c=>{const[r,g,b]=hex2rgb(c);pdf.setDrawColor(r,g,b)};
+  const tc=c=>{const[r,g,b]=hex2rgb(c);pdf.setTextColor(r,g,b)};
+  const x0=ml;
+  let y=mt;
+
+  // Logo
+  const logoEl=document.querySelector('.enc-logo img');
+  if(logoEl&&logoEl.src.startsWith('data:')){
+    try{pdf.addImage(logoEl.src,'PNG',ml,y,35,18);}catch(e){}
+  }else{
+    pdf.setFont('helvetica','bold');pdf.setFontSize(9);tc(AZ);
+    pdf.text('INDRA',ml+5,y+8);pdf.text('GROUP',ml+4,y+13);
+  }
+
+  // Título
+  pdf.setFont('helvetica','bold');pdf.setFontSize(11);tc(BK);
+  const tit='REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACRO DE EMERGENCIA';
+  const titLines=pdf.splitTextToSize(tit,tw-40-45);
+  pdf.text(titLines,ml+38+(tw-40-45)/2,y+8+(titLines.length>1?0:3),{align:'center'});
+
+  // Código der
+  pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);tc(BK);
+  const cx=pw-mr-42;
+  pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+4);
+  pdf.text('VERSIÓN: 01',cx,y+8);
+  pdf.text('FECHA: 2024-12-11',cx,y+12);
+  pdf.text(`Página: ${o.pg} de ${o.totalPags}`,cx,y+16);
+  y+=22;
+
+  pdf.setLineWidth(0.3);
+  const rH=5,rHd=4.5;
+
+  // Fila N° REGISTRO
+  fill(GR);stroke(BK);pdf.rect(x0,y,22,rH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
+  pdf.text('N°',x0+11,y+2,{align:'center'});
+  pdf.text('REGISTRO',x0+11,y+4.2,{align:'center'});
+  fill(WH);stroke(BK);pdf.rect(x0+22,y,42,rH,'FD');
+  pdf.setFontSize(8);pdf.text(o.numReg,x0+23,y+3.5);
+  fill(AZ);stroke(BK);pdf.rect(x0+64,y,tw-64,rH,'FD');
+  tc(WH);pdf.setFontSize(7);
+  pdf.text('REGISTRO DE INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACROS DE EMERGENCIA',
+    x0+64+(tw-64)/2,y+3.2,{align:'center'});
+  y+=rH;
+
+  // DATOS DEL EMPLEADOR
+  fill(GR);stroke(BK);pdf.rect(x0,y,tw,4,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('DATOS DEL EMPLEADOR',x0+1,y+2.8);
+  y+=4;
+
+  // DATOS DEL EMPLEADOS PRINCIPAL
+  fill(AZ);stroke(BK);pdf.rect(x0,y,tw,4,'FD');
+  tc(WH);pdf.setFontSize(7.5);
+  pdf.text('DATOS DEL EMPLEADOS PRINCIPAL',x0+tw/2,y+2.8,{align:'center'});
+  y+=4;
+
+  // Headers empresa
+  const eW=[32,25,55,42,40],eX=[x0];
+  for(let i=1;i<eW.length;i++)eX.push(eX[i-1]+eW[i-1]);
+  ['RAZÓN SOCIAL','RUC','DOMICILIO (Dirección, distrito, departamento, provincia)',
+   'TIPO DE ACTIVIDAD ECONÓMICA','N° TRABAJADORES EN EL CENTRO LABORAL'].forEach((h,i)=>{
+    fill(GR);stroke(BK);pdf.rect(eX[i],y,eW[i],7,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
+    const ls=pdf.splitTextToSize(h,eW[i]-1);
+    ls.forEach((l,j)=>pdf.text(l,eX[i]+eW[i]/2,y+2+j*2.5,{align:'center'}));
+  });
+  y+=7;
+
+  // Datos empresa
+  ['INDRA PERÚ S.A.','20100123411',
+   'AV. JORGE BASADRE NRO. 233 INT. 901 (ALT. CUADRA 01 JAVIER PRADO OESTE) LIMA - LIMA - SAN ISIDRO',
+   'ACTIVIDADES DE CONSULTORÍA DE GESTIÓN.',o.numT].forEach((d,i)=>{
+    fill(WH);stroke(BK);pdf.rect(eX[i],y,eW[i],8,'FD');
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6);
+    const ls=pdf.splitTextToSize(d,eW[i]-1);
+    ls.forEach((l,j)=>pdf.text(l,eX[i]+eW[i]/2,y+2.5+j*2.5,{align:'center'}));
+  });
+  y+=8;
+
+  // MARCAR X
+  fill(GR);stroke(BK);pdf.rect(x0,y,tw,3.5,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('MARCAR (X)',x0+tw/2,y+2.5,{align:'center'});
+  y+=3.5;
+
+  const tW=[32,48,34,40,40],tX=[x0];
+  for(let i=1;i<tW.length;i++)tX.push(tX[i-1]+tW[i-1]);
+  ['INDUCCIÓN','CAPACITACIÓN','ENTRENAMIENTO','SIMULACRO DE EMERGENCIAS','OTROS'].forEach((t,i)=>{
+    fill(GR);stroke(BK);pdf.rect(tX[i],y,tW[i],rHd,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6.5);
+    pdf.text(t,tX[i]+tW[i]/2,y+rHd/2+1,{align:'center',baseline:'middle'});
+  });
+  y+=rHd;
+  [o.xIn,o.xCap,o.xEnt,o.xSim,o.xOt].forEach((v,i)=>{
+    fill(WH);stroke(BK);pdf.rect(tX[i],y,tW[i],rHd,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+    pdf.text(v||'',tX[i]+tW[i]/2,y+rHd/2+1,{align:'center',baseline:'middle'});
+  });
+  y+=rHd;
+
+  // TEMA
+  const temaLines=o.tema.split('\n').filter(l=>l.trim());
+  const temaH=Math.max(12,temaLines.length*3.5+3);
+  fill(GR);stroke(BK);pdf.rect(x0,y,22,temaH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('TEMA:',x0+1,y+temaH/2+1);
+  fill(WH);stroke(BK);pdf.rect(x0+22,y,tw-22,temaH,'FD');
+  pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);
+  temaLines.forEach((l,j)=>pdf.text(l.trim(),x0+23,y+3+j*3.5));
+  y+=temaH;
+
+  // FECHA y HORAS
+  fill(GR);stroke(BK);pdf.rect(x0,y,22,rH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('FECHA:',x0+1,y+rH/2+1);
+  fill(WH);stroke(BK);pdf.rect(x0+22,y,tw-22-46,rH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(8);
+  pdf.text(o.fechaStr,x0+23,y+rH/2+1);
+  fill(GR);stroke(BK);pdf.rect(x0+tw-46,y,28,rH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('N° HORAS',x0+tw-46+14,y+rH/2+1,{align:'center',baseline:'middle'});
+  fill(WH);stroke(BK);pdf.rect(x0+tw-18,y,18,rH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(8);
+  pdf.text(String(o.horas),x0+tw-9,y+rH/2+1,{align:'center',baseline:'middle'});
+  y+=rH;
+
+  // CAPACITADOR
+  fill(GR);stroke(BK);pdf.rect(x0,y,35,rH+1,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
+  pdf.text('NOMBRE DEL CAPACITADOR',x0+1,y+2.5);
+  pdf.text('O ENTRENADOR:',x0+1,y+5);
+  fill(WH);stroke(BK);pdf.rect(x0+35,y,tw-35,rH+1,'FD');
+  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);
+  const capLs=pdf.splitTextToSize(o.cap,tw-36);
+  capLs.forEach((l,j)=>pdf.text(l,x0+35+(tw-35)/2,y+2.5+j*2.8,{align:'center'}));
+  y+=rH+1;
+
+  // Headers participantes
+  const pW=[8,66,22,24,24,50],pX=[x0];
+  for(let i=1;i<pW.length;i++)pX.push(pX[i-1]+pW[i-1]);
+  ['N°','APELLIDOS Y NOMBRES DE LOS CAPACITADOS','N°DNI','ÁREA','FIRMA','OBSERVACIONES.(CARGO)'].forEach((h,i)=>{
+    fill(GR);stroke(BK);pdf.rect(pX[i],y,pW[i],rHd,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
+    const ls=pdf.splitTextToSize(h,pW[i]-0.5);
+    ls.forEach((l,j)=>pdf.text(l,pX[i]+pW[i]/2,y+1.5+j*2.5,{align:'center'}));
+  });
+  y+=rHd;
+
+  // 30 filas participantes
+  const prH=4.8;
+  o.grupo.forEach((c,i)=>{
+    const n=(o.pg-1)*30+i+1;
+    fill(WH);stroke(BK);
+    pW.forEach((_,j)=>pdf.rect(pX[j],y,pW[j],prH,'S'));
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);
+    pdf.text(String(n),pX[0]+pW[0]/2,y+prH/2+1,{align:'center',baseline:'middle'});
+    if(c){
+      pdf.text(pdf.splitTextToSize(c.nom,pW[1]-1)[0],pX[1]+1,y+prH/2+1,{baseline:'middle'});
+      pdf.text(c.dni,pX[2]+pW[2]/2,y+prH/2+1,{align:'center',baseline:'middle'});
+      pdf.text(c.area||'',pX[3]+pW[3]/2,y+prH/2+1,{align:'center',baseline:'middle'});
+      pdf.text((c.cargo||'').substring(0,30),pX[5]+1,y+prH/2+1,{baseline:'middle'});
+    }
+    y+=prH;
+  });
+
+  // RESPONSABLE
+  fill(AZ);stroke(BK);pdf.rect(x0,y,tw,3.5,'FD');
+  tc(WH);pdf.setFont('helvetica','bold');pdf.setFontSize(7.5);
+  pdf.text('RESPONSABLE DEL REGISTRO',x0+tw/2,y+2.5,{align:'center'});
+  y+=3.5;
+  const respW=50;
+  [['Nombre y Apellidos:',o.rNom],['Cargo:',o.rCar],['Fecha:',o.fechaStr]].forEach(([lbl,val])=>{
+    fill(GR);stroke(BK);pdf.rect(x0,y,respW,rH,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+    pdf.text(lbl,x0+1,y+rH/2+1);
+    fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,rH,'FD');
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(7);
+    pdf.text(val,x0+respW+(tw-respW)/2,y+rH/2+1,{align:'center',baseline:'middle'});
+    y+=rH;
+  });
+  fill(GR);stroke(BK);pdf.rect(x0,y,respW,12,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  pdf.text('Firma:',x0+1,y+3);
+  fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,12,'FD');
 }
 
 function toast(msg,type='info'){
