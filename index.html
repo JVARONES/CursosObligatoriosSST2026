@@ -123,7 +123,7 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
   color:#000;
 }
 .enc-codigo{
-  font-size:7.5pt;line-height:1.8;
+  font-size:5.5pt;line-height:1.8;
   padding:0 0 0 8px;
   text-align:left;
   white-space:nowrap;
@@ -666,7 +666,14 @@ function dibujarPagina(pdf,o){
   // Logo
   const logoEl=document.querySelector('.enc-logo img');
   if(logoEl&&logoEl.src.startsWith('data:')){
-    try{pdf.addImage(logoEl.src,'PNG',ml,y,35,18);}catch(e){}
+    try{
+      const iW=logoEl.naturalWidth||200;
+      const iH=logoEl.naturalHeight||100;
+      const ratio=iH/iW;
+      const logoW=38;
+      const logoH=logoW*ratio;
+      pdf.addImage(logoEl.src,'PNG',ml,y,logoW,logoH);
+    }catch(e){}
   }else{
     pdf.setFont('helvetica','bold');pdf.setFontSize(9);tc(AZ);
     pdf.text('INDRA',ml+5,y+8);pdf.text('GROUP',ml+4,y+13);
@@ -680,11 +687,11 @@ function dibujarPagina(pdf,o){
 
   // Código der
   pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);tc(BK);
-  const cx=pw-mr-42;
-  pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+4);
-  pdf.text('VERSIÓN: 01',cx,y+8);
-  pdf.text('FECHA: 2024-12-11',cx,y+12);
-  pdf.text(`Página: ${o.pg} de ${o.totalPags}`,cx,y+16);
+  const cx=pw-mr; // borde derecho
+  pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+4,{align:'right'});
+  pdf.text('VERSIÓN: 01',cx,y+7.5,{align:'right'});
+  pdf.text('FECHA: 2024-12-11',cx,y+11,{align:'right'});
+  pdf.text(`Página: ${o.pg} de ${o.totalPags}`,cx,y+14.5,{align:'right'});
   y+=22;
 
   pdf.setLineWidth(0.3);
