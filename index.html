@@ -696,13 +696,13 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const rH=5,rHd=4.5;
 
   // Fila N° REGISTRO
-  fill(GR);stroke(BK);pdf.rect(x0,y,22,rH,'FD');
+  fill(GR);stroke(BK);pdf.rect(x0,y,19,rH,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
-  pdf.text('N°',x0+11,y+2,{align:'center'});
-  pdf.text('REGISTRO',x0+11,y+4.2,{align:'center'});
-  fill(WH);stroke(BK);pdf.rect(x0+22,y,42,rH,'FD');
-  pdf.setFontSize(8);pdf.text(o.numReg,x0+23,y+3.5);
-  fill(AZ);stroke(BK);pdf.rect(x0+64,y,tw-64,rH,'FD');
+  pdf.text('N°',x0+9.5,y+2,{align:'center'});
+  pdf.text('REGISTRO',x0+9.5,y+4.2,{align:'center'});
+  fill(WH);stroke(BK);pdf.rect(x0+19,y,19,rH,'FD');
+  pdf.setFontSize(8);pdf.text(o.numReg,x0+20,y+3.5);
+  fill(AZ);stroke(BK);pdf.rect(x0+38,y,tw-38,rH,'FD');
   tc(WH);pdf.setFontSize(7);
   pdf.text('REGISTRO DE INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACROS DE EMERGENCIA',
     x0+64+(tw-64)/2,y+3.2,{align:'center'});
