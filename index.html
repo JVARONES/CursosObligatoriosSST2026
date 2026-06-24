@@ -634,7 +634,7 @@ async function descargarPDF(){
   const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
   const xSim=document.getElementById('tipoSim').checked?'X':'';
   const xOt=document.getElementById('tipoOt').checked?'X':'';
-  const totalPags=filtrados.length>20?2:1;
+  const totalPags=Math.ceil(filtrados.length/20);
   toast('Generando PDF…');
   try{
     const{jsPDF}=window.jspdf;
@@ -892,7 +892,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   y+=pH;
 
  // 20 filas participantes
-  const prH=6;
+  const prH=7;
   o.grupo.forEach((c,i)=>{
     const n=(o.pg-1)*20+i+1;
     // calcular líneas de nombre y cargo para altura dinámica
