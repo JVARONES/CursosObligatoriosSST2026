@@ -784,14 +784,29 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // TEMA — altura automática según contenido
   const temaW1=38, temaW2=tw-38;
   // Dividir por saltos de línea Y por ancho de celda
-  const temaRaw=o.tema.split('\n').filter(l=>l.trim());
-  const temaLineas=[];
-  temaRaw.forEach(linea=>{
-    const wrapped=pdf.splitTextToSize(linea.trim(),temaW2-4);
-    wrapped.forEach(l=>temaLineas.push(l));
+  temaLineas.forEach((linea,j)=>{
+    const {texto, esUltimaDePárrafo}=linea;
+    const ty=y+lineHT/2+j*lineHT;
+    if(esUltimaDePárrafo){
+      // izquierda sin justificar
+      pdf.text(texto,x0+temaW1+2,ty,{baseline:'middle'});
+    } else {
+      // justificar
+      const palabras=texto.split(' ').filter(p=>p.length>0);
+      if(palabras.length<=1){
+        pdf.text(texto,x0+temaW1+2,ty,{baseline:'middle'});
+      } else {
+        const anchoTotal=temaW2-4;
+        const anchoTexto=pdf.getTextWidth(palabras.join(''));
+        const espacioEntrePalabras=(anchoTotal-anchoTexto)/(palabras.length-1);
+        let cx=x0+temaW1+2;
+        palabras.forEach(p=>{
+          pdf.text(p,cx,ty,{baseline:'middle'});
+          cx+=pdf.getTextWidth(p)+espacioEntrePalabras;
+        });
+      }
+    }
   });
-  const lineHT=4;
-  const temaH=Math.max(lineHT, temaLineas.length*lineHT);
   // Celda TEMA:
   fill(GR);stroke(BK);pdf.rect(x0,y,temaW1,temaH,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
