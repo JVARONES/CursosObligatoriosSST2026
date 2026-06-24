@@ -475,7 +475,17 @@ function generarFormato(){
   };
   const empNom=empData[empVal].nom;
   const empRuc=empData[empVal].ruc;
+  const empVal=document.querySelector('input[name="empresa"]:checked').value;
+  const empData={
+    IP:{nom:'INDRA PERÚ S.A.',ruc:'20100123411'},
+    IT:{nom:'INDRA T & D S.A.C.',ruc:'20604487901'},
+    NK:{nom:'NUEK PAYMENTS PERÚ S.A.C.',ruc:'20374984838'}
+  };
+  const empNom=empData[empVal].nom;
+  const empRuc=empData[empVal].ruc;
   const totalPags=Math.ceil(filtrados.length/20);
+  toast('Generando PDF…');
+  try{
 
   document.getElementById('prevTitle').textContent=`Registro ${numReg} · ${corrStr}`;
   const cont=document.getElementById('regContent');cont.innerHTML='';
