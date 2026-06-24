@@ -663,7 +663,7 @@ function dibujarPagina(pdf,o){
 
   // Logo
   const logoEl=document.querySelector('.enc-logo img');
-  if(logoEl&&logoEl.src.startsWith('data:')){
+  if(logoEl&&logoEl.src&&logoEl.src.length>100){
     try{
       const iW=logoEl.naturalWidth||200;
       const iH=logoEl.naturalHeight||100;
