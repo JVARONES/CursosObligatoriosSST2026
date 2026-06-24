@@ -867,7 +867,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // Headers participantes
   const pW=[9.5,66.5,21,21,19,57],pX=[x0];
   for(let i=1;i<pW.length;i++)pX.push(pX[i-1]+pW[i-1]);
-  const pHdr=['N°','APELLIDOS Y NOMBRES DE LOS CAPACITADOS','N°DNI','ÁREA','FIRMA','OBSERVACIONES.(CARGO)'];
+  const pHdr=['N°','APELLIDOS Y NOMBRES DE LOS CAPACITADOS','N°DNI','ÁREA','FIRMA','OBSERVACIONES\n(CARGO)'];
   const pH=4;
   pHdr.forEach((h,i)=>{
     fill(GR);stroke(BK);
