@@ -725,7 +725,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
 
   // DATOS DEL EMPLEADOS PRINCIPAL
   fill(AZ);stroke(BK);pdf.rect(x0,y,tw,4,'FD');
-  tc(WH);pdf.setFontSize(7);
+  tc(WH);pdf.setFontSize(5.5);
   pdf.text('DATOS DEL EMPLEADOS PRINCIPAL',x0+tw/2,y+2.8,{align:'center'});
   y+=4;
 
@@ -747,9 +747,9 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // Datos empresa
   ['INDRA PERÚ S.A.','20100123411',
    'AV. JORGE BASADRE NRO. 233 INT. 901 (ALT. CUADRA 01 JAVIER PRADO OESTE) LIMA - LIMA - SAN ISIDRO',
-   'ACTIVIDADES DE CONSULTORÍA DE GESTIÓN.',o.numT].forEach((d,i)=>{
+   'ACTIVIDADES DE CONSULTORÍA DE GESTIÓN',o.numT].forEach((d,i)=>{
     fill(WH);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6);
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(d,eW[i]-2);
     const lineH=2.8;
     const totalH=(ls.length-1)*lineH;
@@ -759,25 +759,27 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   y+=eH;
 
   // MARCAR X
-  fill(GR);stroke(BK);pdf.rect(x0,y,tw,3.5,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-  pdf.text('MARCAR (X)',x0+tw/2,y+2.5,{align:'center'});
-  y+=3.5;
-
-  const tW=[32,48,34,40,40],tX=[x0];
+  const mH=4; // mitad de 8
+  fill(GR);stroke(BK);pdf.rect(x0,y,tw,mH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  pdf.text('MARCAR (X)',x0+tw/2,y+mH/2,{align:'center',baseline:'middle'});
+  y+=mH;
+  // Headers tipos — mismas 5 columnas que empresa
+  const tW=[38,38,42,38,38],tX=[x0];
   for(let i=1;i<tW.length;i++)tX.push(tX[i-1]+tW[i-1]);
   ['INDUCCIÓN','CAPACITACIÓN','ENTRENAMIENTO','SIMULACRO DE EMERGENCIAS','OTROS'].forEach((t,i)=>{
-    fill(GR);stroke(BK);pdf.rect(tX[i],y,tW[i],rHd,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6.5);
-    pdf.text(t,tX[i]+tW[i]/2,y+rHd/2+1,{align:'center',baseline:'middle'});
+    fill(GR);stroke(BK);pdf.rect(tX[i],y,tW[i],mH,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    pdf.text(t,tX[i]+tW[i]/2,y+mH/2,{align:'center',baseline:'middle'});
   });
-  y+=rHd;
+  y+=mH;
+  // Valores X
   [o.xIn,o.xCap,o.xEnt,o.xSim,o.xOt].forEach((v,i)=>{
-    fill(WH);stroke(BK);pdf.rect(tX[i],y,tW[i],rHd,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-    pdf.text(v||'',tX[i]+tW[i]/2,y+rHd/2+1,{align:'center',baseline:'middle'});
+    fill(WH);stroke(BK);pdf.rect(tX[i],y,tW[i],mH,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    pdf.text(v||'',tX[i]+tW[i]/2,y+mH/2,{align:'center',baseline:'middle'});
   });
-  y+=rHd;
+  y+=mH;
 
   // TEMA
   const temaLines=o.tema.split('\n').filter(l=>l.trim());
