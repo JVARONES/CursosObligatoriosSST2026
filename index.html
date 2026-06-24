@@ -459,14 +459,14 @@ function generarFormato(){
   const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
   const xSim=document.getElementById('tipoSim').checked?'X':'';
   const xOt=document.getElementById('tipoOt').checked?'X':'';
-  const totalPags=filtrados.length>30?2:1;
+  const totalPags=Math.ceil(filtrados.length/20);
 
   document.getElementById('prevTitle').textContent=`Registro ${numReg} · ${corrStr}`;
   const cont=document.getElementById('regContent');cont.innerHTML='';
 
   for(let pg=1;pg<=totalPags;pg++){
-    const grupo=[...filtrados.slice((pg-1)*30,pg*30)];
-    while(grupo.length<30)grupo.push(null);
+    const grupo=[...filtrados.slice((pg-1)*20,pg*20)];
+    while(grupo.length<20)grupo.push(null);
 
     let filas='';
     grupo.forEach((c,i)=>{
@@ -868,7 +868,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const pW=[9.5,66.5,21,21,19,57],pX=[x0];
   for(let i=1;i<pW.length;i++)pX.push(pX[i-1]+pW[i-1]);
   const pHdr=['N°','APELLIDOS Y NOMBRES DE LOS CAPACITADOS','N°DNI','ÁREA','FIRMA','OBSERVACIONES\n(CARGO)'];
-  const pH=4;
+  const pH=8;
   pHdr.forEach((h,i)=>{
     fill(GR);stroke(BK);
     // Col N° sin borde derecho
@@ -891,21 +891,45 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   });
   y+=pH;
 
-  // 30 filas participantes
-  const prH=4.8;
+ // 20 filas participantes
+  const prH=6;
   o.grupo.forEach((c,i)=>{
-    const n=(o.pg-1)*30+i+1;
+    const n=(o.pg-1)*20+i+1;
+    // calcular líneas de nombre y cargo para altura dinámica
+    pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    const nomLs=c?pdf.splitTextToSize(c.nom,pW[1]-2):[''];
+    const carLs=c?pdf.splitTextToSize(c.cargo||'',pW[5]-2):[''];
+    const maxLs=Math.max(nomLs.length,carLs.length,1);
+    const filaH=Math.max(prH,maxLs*prH);
+    // dibujar celdas
     fill(WH);stroke(BK);
-    pW.forEach((_,j)=>pdf.rect(pX[j],y,pW[j],prH,'S'));
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);
-    pdf.text(String(n),pX[0]+pW[0]/2,y+prH/2+1,{align:'center',baseline:'middle'});
+    // col N° sin borde derecho
+    pdf.rect(pX[0],y,pW[0],filaH,'F');
+    stroke(BK);
+    pdf.line(pX[0],y,pX[0]+pW[0],y);
+    pdf.line(pX[0],y,pX[0],y+filaH);
+    pdf.line(pX[0],y+filaH,pX[0]+pW[0],y+filaH);
+    // resto de columnas
+    for(let j=1;j<pW.length;j++) pdf.rect(pX[j],y,pW[j],filaH,'S');
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    // N°
+    pdf.text(String(n),pX[0]+pW[0]/2,y+filaH/2,{align:'center',baseline:'middle'});
     if(c){
-      pdf.text(pdf.splitTextToSize(c.nom,pW[1]-1)[0],pX[1]+1,y+prH/2+1,{baseline:'middle'});
-      pdf.text(c.dni,pX[2]+pW[2]/2,y+prH/2+1,{align:'center',baseline:'middle'});
-      pdf.text(c.area||'',pX[3]+pW[3]/2,y+prH/2+1,{align:'center',baseline:'middle'});
-      pdf.text((c.cargo||'').substring(0,30),pX[5]+1,y+prH/2+1,{baseline:'middle'});
+      // Nombre — centrado vertical, multilinea
+      const nomTotalH=(nomLs.length-1)*LH;
+      const nomStartY=y+filaH/2-nomTotalH/2;
+      nomLs.forEach((l,j)=>pdf.text(l,pX[1]+pW[1]/2,nomStartY+j*LH,{align:'center',baseline:'middle'}));
+      // DNI
+      pdf.text(c.dni,pX[2]+pW[2]/2,y+filaH/2,{align:'center',baseline:'middle'});
+      // ÁREA
+      pdf.text(c.area||'',pX[3]+pW[3]/2,y+filaH/2,{align:'center',baseline:'middle'});
+      // FIRMA — vacía
+      // CARGO — centrado vertical, multilinea
+      const carTotalH=(carLs.length-1)*LH;
+      const carStartY=y+filaH/2-carTotalH/2;
+      carLs.forEach((l,j)=>pdf.text(l,pX[5]+pW[5]/2,carStartY+j*LH,{align:'center',baseline:'middle'}));
     }
-    y+=prH;
+    y+=filaH;
   });
 
   // RESPONSABLE
