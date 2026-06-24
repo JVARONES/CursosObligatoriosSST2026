@@ -225,7 +225,8 @@ Módulo IV: RIESGOS PSICOSOCIALES.</textarea>
     </div>
     <div class="fg full" style="margin-bottom:11px">
       <label>NOMBRE DEL CAPACITADOR / ENTRENADOR</label>
-      <input type="text" id="capacitador" value="Ing. Marcia Cárdenas Medina - Supervisor Principal SST / Med. Liliana Aparcana Jacobo - Médico Ocupacional">
+      <textarea id="capacitador" rows="2">Ing. Marcia Cárdenas Medina - Supervisor Principal SST
+Med. Liliana Aparcana Jacobo - Médico Ocupacional</textarea>
     </div>
     <div class="fg full" style="margin-bottom:11px">
       <label>TIPO DE CAPACITACIÓN</label>
@@ -818,31 +819,44 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   });
   y+=temaH;
 
-  // FECHA y HORAS
-  fill(GR);stroke(BK);pdf.rect(x0,y,22,rH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-  pdf.text('FECHA:',x0+1,y+rH/2+1);
-  fill(WH);stroke(BK);pdf.rect(x0+22,y,tw-22-46,rH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(8);
-  pdf.text(o.fechaStr,x0+23,y+rH/2+1);
-  fill(GR);stroke(BK);pdf.rect(x0+tw-46,y,28,rH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-  pdf.text('N° HORAS',x0+tw-46+14,y+rH/2+1,{align:'center',baseline:'middle'});
-  fill(WH);stroke(BK);pdf.rect(x0+tw-18,y,18,rH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(8);
-  pdf.text(String(o.horas),x0+tw-9,y+rH/2+1,{align:'center',baseline:'middle'});
-  y+=rH;
+  // FECHA y HORAS — alto 4
+  const fHora=4;
+  fill(GR);stroke(BK);pdf.rect(x0,y,38,fHora,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  pdf.text('FECHA:',x0+1,y+fHora/2,{baseline:'middle'});
+  fill(WH);stroke(BK);pdf.rect(x0+38,y,59,fHora,'FD');
+  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  pdf.text(o.fechaStr,x0+38+59/2,y+fHora/2,{align:'center',baseline:'middle'});
+  fill(GR);stroke(BK);pdf.rect(x0+97,y,38,fHora,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  pdf.text('N° HORAS',x0+97+1,y+fHora/2,{baseline:'middle'});
+  fill(WH);stroke(BK);pdf.rect(x0+135,y,59,fHora,'FD');
+  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  pdf.text(String(o.horas),x0+135+59/2,y+fHora/2,{align:'center',baseline:'middle'});
+  y+=fHora;
 
-  // CAPACITADOR
-  fill(GR);stroke(BK);pdf.rect(x0,y,35,rH+1,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
-  pdf.text('NOMBRE DEL CAPACITADOR',x0+1,y+2.5);
-  pdf.text('O ENTRENADOR:',x0+1,y+5);
-  fill(WH);stroke(BK);pdf.rect(x0+35,y,tw-35,rH+1,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(6.5);
-  const capLs=pdf.splitTextToSize(o.cap,tw-36);
-  capLs.forEach((l,j)=>pdf.text(l,x0+35+(tw-35)/2,y+2.5+j*2.8,{align:'center'}));
-  y+=rH+1;
+  // CAPACITADOR — alto automático
+  const capW1=76, capW2=tw-76;
+  pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  const capRaw=o.cap.split('\n').filter(l=>l.trim());
+  const capLineas=[];
+  capRaw.forEach(linea=>{
+    const wrapped=pdf.splitTextToSize(linea.trim(),capW2-4);
+    wrapped.forEach(l=>capLineas.push(l));
+  });
+  const capH=Math.max(4,capLineas.length*4);
+  fill(GR);stroke(BK);pdf.rect(x0,y,capW1,capH,'FD');
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  const capLbl=pdf.splitTextToSize('NOMBRE DEL CAPACITADOR O ENTRENADOR:',capW1-2);
+  const capLblH=(capLbl.length-1)*3;
+  const capLblY=y+capH/2-capLblH/2;
+  capLbl.forEach((l,j)=>pdf.text(l,x0+1,capLblY+j*3,{baseline:'middle'}));
+  fill(WH);stroke(BK);pdf.rect(x0+capW1,y,capW2,capH,'FD');
+  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  const capTotalH=(capLineas.length-1)*4;
+  const capStartY=y+capH/2-capTotalH/2;
+  capLineas.forEach((l,j)=>pdf.text(l,x0+capW1+capW2/2,capStartY+j*4,{align:'center',baseline:'middle'}));
+  y+=capH;
 
   // Headers participantes
   const pW=[8,66,22,24,24,50],pX=[x0];
