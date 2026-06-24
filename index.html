@@ -684,11 +684,13 @@ function dibujarPagina(pdf,o){
     pdf.text('INDRA',ml+5,y+8);pdf.text('GROUP',ml+4,y+13);
   }
 
-  // Título
+ // Título
   pdf.setFont('helvetica','bold');pdf.setFontSize(11);tc(BK);
   const tit='REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACRO DE EMERGENCIA';
-  const titLines=pdf.splitTextToSize(tit,tw-40-45);
-  pdf.text(titLines,ml+38+(tw-40-45)/2,y+8+(titLines.length>1?0:3),{align:'center'});
+  const titLines=pdf.splitTextToSize(tit,tw-4);
+  const titTotalH=(titLines.length-1)*3.5;
+  const titStartY=y+11-titTotalH/2;
+  pdf.text(titLines,ml+tw/2,titStartY,{align:'center',baseline:'middle'});
 
   // Código der
   pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);tc(BK);
