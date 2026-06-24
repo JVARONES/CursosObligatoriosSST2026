@@ -932,24 +932,28 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     y+=filaH;
   });
 
-  // RESPONSABLE
-  fill(AZ);stroke(BK);pdf.rect(x0,y,tw,3.5,'FD');
-  tc(WH);pdf.setFont('helvetica','bold');pdf.setFontSize(7.5);
-  pdf.text('RESPONSABLE DEL REGISTRO',x0+tw/2,y+2.5,{align:'center'});
-  y+=3.5;
+   // RESPONSABLE
+  const respH=4;
   const respW=50;
+  fill(AZ);stroke(BK);pdf.rect(x0,y,tw,respH,'FD');
+  tc(WH);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  pdf.text('RESPONSABLE DEL REGISTRO',x0+tw/2,y+respH/2,{align:'center',baseline:'middle'});
+  y+=respH;
+
   [['Nombre y Apellidos:',o.rNom],['Cargo:',o.rCar],['Fecha:',o.fechaStr]].forEach(([lbl,val])=>{
-    fill(GR);stroke(BK);pdf.rect(x0,y,respW,rH,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-    pdf.text(lbl,x0+1,y+rH/2+1);
-    fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,rH,'FD');
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(7);
-    pdf.text(val,x0+respW+(tw-respW)/2,y+rH/2+1,{align:'center',baseline:'middle'});
-    y+=rH;
+    fill(GR);stroke(BK);pdf.rect(x0,y,respW,respH,'FD');
+    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    pdf.text(lbl,x0+1,y+respH/2,{baseline:'middle'});
+    fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,respH,'FD');
+    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    pdf.text(val,x0+respW+(tw-respW)/2,y+respH/2,{align:'center',baseline:'middle'});
+    y+=respH;
   });
+
+  // Firma — alto 12
   fill(GR);stroke(BK);pdf.rect(x0,y,respW,12,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
-  pdf.text('Firma:',x0+1,y+3);
+  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  pdf.text('Firma:',x0+1,y+6,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,12,'FD');
 }
 
