@@ -655,6 +655,7 @@ async function descargarPDF(){
 function dibujarPagina(pdf,o){
   const AZ='#004254',GR='#E4E3DA',BK='#000000',WH='#FFFFFF';
   const ml=8,mr=8,mt=8,pw=210,tw=194;
+  const LH=2.8; // ← interlineado global, cambia solo este número
   const hex2rgb=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
   const fill=c=>{const[r,g,b]=hex2rgb(c);pdf.setFillColor(r,g,b)};
   const stroke=c=>{const[r,g,b]=hex2rgb(c);pdf.setDrawColor(r,g,b)};
@@ -739,7 +740,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     fill(GR);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
     tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(h,eW[i]-2);
-    const lineH=2.8;
+    const lineH=LH;
     const totalH=(ls.length-1)*lineH;
     const startY=y+eH/2-totalH/2;
     ls.forEach((l,j)=>pdf.text(l,eX[i]+eW[i]/2,startY+j*lineH,{align:'center',baseline:'middle'}));
@@ -752,7 +753,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     fill(WH);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
     tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(d,eW[i]-2);
-    const lineH=2.8;
+    const lineH=LH;
     const totalH=(ls.length-1)*lineH;
     const startY=y+eH/2-totalH/2;
     ls.forEach((l,j)=>pdf.text(l,eX[i]+eW[i]/2,startY+j*lineH,{align:'center',baseline:'middle'}));
@@ -791,7 +792,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     const wrapped=pdf.splitTextToSize(linea.trim(),temaW2-4);
     wrapped.forEach((l,idx)=>temaLineas.push({texto:l,esUltima:idx===wrapped.length-1}));
   });
-  const lineHT=4;
+  const lineHT=LH;
   const temaH=Math.max(lineHT,temaLineas.length*lineHT);
   fill(GR);stroke(BK);pdf.rect(x0,y,temaW1,temaH,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
