@@ -662,18 +662,22 @@ function dibujarPagina(pdf,o){
   let y=mt;
 
   // Logo
-
-  const logoEl=document.querySelector('.enc-logo img');
-  if(logoEl&&logoEl.src&&logoEl.src.length>100){
-    try{
-      const iW=logoEl.naturalWidth||200;
-      const iH=logoEl.naturalHeight||100;
-      const ratio=iH/iW;
+  try{
+    const imgEl=document.querySelector('.enc-logo img');
+    if(imgEl&&imgEl.src&&imgEl.src.length>100){
+      const canvas=document.createElement('canvas');
+      canvas.width=imgEl.naturalWidth||400;
+      canvas.height=imgEl.naturalHeight||200;
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='white';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(imgEl,0,0);
+      const jpegSrc=canvas.toDataURL('image/jpeg',0.95);
       const logoW=38;
-      const logoH=logoW*ratio;
-      pdf.addImage(logoEl.src,ml,y,logoW,logoH);
-    }catch(e){}
-  }else{
+      const logoH=logoW*(imgEl.naturalHeight/imgEl.naturalWidth);
+      pdf.addImage(jpegSrc,'JPEG',ml,y,logoW,logoH);
+    }
+  }catch(e){
     pdf.setFont('helvetica','bold');pdf.setFontSize(9);tc(AZ);
     pdf.text('INDRA',ml+5,y+8);pdf.text('GROUP',ml+4,y+13);
   }
