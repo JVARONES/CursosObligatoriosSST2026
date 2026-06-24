@@ -774,7 +774,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // Datos empresa
   [o.empNom,o.empRuc,
    'AV. JORGE BASADRE NRO. 233 INT. 901 (ALT. CUADRA 01 JAVIER PRADO OESTE) LIMA - LIMA - SAN ISIDRO',
-   'ACTIVIDADES DE CONSULTORÍA DE GESTIÓN',o.numT].forEach((d,i)=>{
+   '7020 - ACTIVIDADES DE CONSULTORÍA DE GESTIÓN',o.numT].forEach((d,i)=>{
     fill(WH);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
     tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(d,eW[i]-2);
