@@ -700,21 +700,21 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   pdf.setLineWidth(0.3);
   const rH=5,rHd=4.5;
 
-  const fH1=7; // altura única para toda la fila
-  // N° REGISTRO
+  const fH1=8;
+  // N° REGISTRO — izquierda, centrado vertical
   fill(GR);stroke(BK);pdf.rect(x0,y,19,fH1,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
-  pdf.text('N°',x0+19/2,y+fH1/2-0.5,{align:'center',baseline:'middle'});
-  pdf.text('REGISTRO',x0+19/2,y+fH1/2+2,{align:'center',baseline:'middle'});
-  // 2026-004 SST
+  pdf.text('N°',x0+1,y+fH1/2-1);
+  pdf.text('REGISTRO',x0+1,y+fH1/2+2);
+  // 2026-005 SST — centrado horizontal y vertical
   fill(WH);stroke(BK);pdf.rect(x0+19,y,19,fH1,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
-  pdf.text(o.numReg,x0+19+19/2,y+fH1/2+1,{align:'center',baseline:'middle'});
-  // Título
+  pdf.text(o.numReg,x0+19+19/2,y+fH1/2,{align:'center',baseline:'middle'});
+  // Título — centrado horizontal y vertical
   fill(GR);stroke(BK);pdf.rect(x0+38,y,tw-38,fH1,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(6);
   const tituloAzul='REGISTRO DE INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACROS DE EMERGENCIA';
-  pdf.text(tituloAzul,x0+38+(tw-38)/2,y+fH1/2+1,{align:'center',baseline:'middle'});
+  pdf.text(tituloAzul,x0+38+(tw-38)/2,y+fH1/2,{align:'center',baseline:'middle'});
   y+=fH1;
 
   // DATOS DEL EMPLEADOR
