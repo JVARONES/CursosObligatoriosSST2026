@@ -793,14 +793,15 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     wrapped.forEach((l,idx)=>temaLineas.push({texto:l,esUltima:idx===wrapped.length-1}));
   });
   const lineHT=LH;
-  const temaH=Math.max(lineHT,temaLineas.length*lineHT);
+  const filaH=4; // alto fijo por fila
+  const temaH=Math.max(filaH,temaLineas.length*filaH);
   fill(GR);stroke(BK);pdf.rect(x0,y,temaW1,temaH,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
   pdf.text('TEMA:',x0+1,y+temaH/2,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+temaW1,y,temaW2,temaH,'FD');
   tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
   temaLineas.forEach((linea,j)=>{
-    const ty=y+lineHT/2+j*lineHT;
+    const ty=y+filaH/2+j*filaH;
     if(linea.esUltima){
       pdf.text(linea.texto,x0+temaW1+2,ty,{baseline:'middle'});
     }else{
@@ -849,14 +850,14 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   fill(GR);stroke(BK);pdf.rect(x0,y,capW1,capH,'FD');
   tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
   const capLbl=pdf.splitTextToSize('NOMBRE DEL CAPACITADOR O ENTRENADOR:',capW1-2);
-  const capLblH=(capLbl.length-1)*3;
+  const capLblH=(capLbl.length-1)*LH;
   const capLblY=y+capH/2-capLblH/2;
-  capLbl.forEach((l,j)=>pdf.text(l,x0+1,capLblY+j*3,{baseline:'middle'}));
+  capLbl.forEach((l,j)=>pdf.text(l,x0+1,capLblY+j*LH,{baseline:'middle'}));
   fill(WH);stroke(BK);pdf.rect(x0+capW1,y,capW2,capH,'FD');
   tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
-  const capTotalH=(capLineas.length-1)*4;
+   const capTotalH=(capLineas.length-1)*LH;
   const capStartY=y+capH/2-capTotalH/2;
-  capLineas.forEach((l,j)=>pdf.text(l,x0+capW1+capW2/2,capStartY+j*4,{align:'center',baseline:'middle'}));
+  capLineas.forEach((l,j)=>pdf.text(l,x0+capW1+capW2/2,capStartY+j*LH,{align:'center',baseline:'middle'}));
   y+=capH;
 
   // Headers participantes
