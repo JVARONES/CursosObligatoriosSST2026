@@ -634,15 +634,15 @@ async function descargarPDF(){
   const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
   const xSim=document.getElementById('tipoSim').checked?'X':'';
   const xOt=document.getElementById('tipoOt').checked?'X':'';
-  const totalPags=filtrados.length>30?2:1;
+  const totalPags=filtrados.length>20?2:1;
   toast('Generando PDF…');
   try{
     const{jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     for(let pg=1;pg<=totalPags;pg++){
       if(pg>1) pdf.addPage();
-      const grupo=[...filtrados.slice((pg-1)*30,pg*30)];
-      while(grupo.length<30) grupo.push(null);
+      const grupo=[...filtrados.slice((pg-1)*20,pg*20)];
+      while(grupo.length<20) grupo.push(null);
       dibujarPagina(pdf,{pg,totalPags,numReg,corrStr,fechaStr,tema,cap,horas,numT,
         rNom,rCar,xIn,xCap,xEnt,xSim,xOt,grupo});
     }
