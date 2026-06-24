@@ -873,15 +873,14 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     fill(GR);stroke(BK);
     // Col N° sin borde derecho
     if(i===0){
-      pdf.setDrawColor(0,0,0);
-      pdf.setFillColor(...hex2rgb(GR));
-      pdf.rect(pX[i],y,pW[i],pH,'F'); // solo relleno sin borde
-      pdf.line(pX[i],y,pX[i]+pW[i],y); // arriba
-      pdf.line(pX[i],y,pX[i],y+pH); // izquierda
-      pdf.line(pX[i],y,pX[i]+pW[i],y); // arriba
-      pdf.line(pX[i],y+pH,pX[i]+pW[i],y+pH); // abajo
-      // sin línea derecha
-    }else{
+      fill(GR);pdf.rect(pX[i],y,pW[i],pH,'F'); // relleno sin bordes
+      stroke(BK);
+      pdf.line(pX[i],y,pX[i]+pW[i],y);         // arriba
+      pdf.line(pX[i],y,pX[i],y+pH);             // izquierda
+      pdf.line(pX[i],y+pH,pX[i]+pW[i],y+pH);   // abajo
+      // sin línea derecha ✓
+    }
+    else{
       pdf.rect(pX[i],y,pW[i],pH,'FD');
     }
     tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
