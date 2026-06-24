@@ -689,7 +689,8 @@ function dibujarPagina(pdf,o){
    const titLines=['REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO','Y SIMULACRO DE EMERGENCIA'];
   const titTotalH=(titLines.length-1)*LH;
   const titStartY=y+13.8-titTotalH/2;
-  titLines.forEach((l,j)=>pdf.text(l,ml+tw/2,titStartY+j*LH,{align:'center',baseline:'middle'}));
+   const titLH=5.6; // interlineado específico para el título
+  titLines.forEach((l,j)=>pdf.text(l,ml+tw/2,titStartY+j*titLH,{align:'center',baseline:'middle'}));
 
   // Código der
   pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);tc(BK);
