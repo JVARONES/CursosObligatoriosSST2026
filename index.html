@@ -686,8 +686,7 @@ function dibujarPagina(pdf,o){
 
  // Título
   pdf.setFont('helvetica','bold');pdf.setFontSize(11);tc(BK);
-  const tit='REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACRO DE EMERGENCIA';
-  const titLines=pdf.splitTextToSize(tit,tw-4);
+   const titLines=['REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO','Y SIMULACRO DE EMERGENCIA'];
   const titTotalH=(titLines.length-1)*LH;
   const titStartY=y+11-titTotalH/2;
   titLines.forEach((l,j)=>pdf.text(l,ml+tw/2,titStartY+j*LH,{align:'center',baseline:'middle'}));
