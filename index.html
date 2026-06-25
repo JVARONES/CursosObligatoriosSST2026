@@ -1054,8 +1054,9 @@ if(firmaBase64){
       const ratio=firmaImg.naturalWidth/firmaImg.naturalHeight;
       const fH=celdaH;
       const fW=fH*ratio;
-      const fx=x0+respW+2;
-      const fy=y+1;
+      const celdaW=tw-respW;
+      const fx=x0+respW+(celdaW-fW)/2; // centrado horizontal
+      const fy=y+(12-fH)/2;            // centrado vertical (celda alto 12)
       const fmt=firmaBase64.startsWith('data:image/png')?'PNG':'JPEG';
       pdf.addImage(firmaBase64,fmt,fx,fy,fW,fH);
     }catch(e){}
