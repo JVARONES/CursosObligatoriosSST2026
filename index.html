@@ -87,7 +87,7 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
   min-height:1123px;
   padding:18px 20px 18px 20px;
   background:#fff;
-  font-family:Arial,Helvetica,sans-serif;
+  font-family:Arial,times,sans-serif;
   font-size:8pt;
   color:#000;
   page-break-after:always;
@@ -710,12 +710,12 @@ function dibujarPagina(pdf,o){
       pdf.addImage(jpegSrc,'JPEG',ml,y,logoW,logoH);
     }
   }catch(e){
-    pdf.setFont('helvetica','bold');pdf.setFontSize(9);tc(AZ);
+    pdf.setFont('times','bold');pdf.setFontSize(9);tc(AZ);
     pdf.text('INDRA',ml+5,y+8);pdf.text('GROUP',ml+4,y+13);
   }
 
  // Título
-  pdf.setFont('helvetica','bold');pdf.setFontSize(11);tc(BK);
+  pdf.setFont('times','bold');pdf.setFontSize(11);tc(BK);
    const titLines=['REGISTRO INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO','Y SIMULACRO DE EMERGENCIA'];
   const titTotalH=(titLines.length-1)*LH;
   const titStartY=y+9.5-titTotalH/2;
@@ -723,7 +723,7 @@ function dibujarPagina(pdf,o){
   titLines.forEach((l,j)=>pdf.text(l,ml+tw/2,titStartY+j*titLH,{align:'center',baseline:'middle'}));
 
   // Código der
-  pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);tc(BK);
+  pdf.setFont('times','normal');pdf.setFontSize(5.5);tc(BK);
   const cx=pw-mr; // borde derecho
 pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   pdf.text('VERSIÓN: 01',cx,y+4.5,{align:'right'});
@@ -737,23 +737,23 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const fH1=8;
   // N° REGISTRO — izquierda, centrado vertical
   fill(GR);stroke(BK);pdf.rect(x0,y,19,fH1,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('N°',x0+1,y+fH1/2-1);
   pdf.text('REGISTRO',x0+1,y+fH1/2+2);
   // 2026-005 SST — centrado horizontal y vertical
   fill(WH);stroke(BK);pdf.rect(x0+19,y,19,fH1,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
   pdf.text(o.numReg,x0+19+19/2,y+fH1/2,{align:'center',baseline:'middle'});
   // Título — centrado horizontal y vertical
   fill(GR);stroke(BK);pdf.rect(x0+38,y,tw-38,fH1,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(7);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(7);
   const tituloAzul='REGISTRO DE INDUCCIÓN, CAPACITACIÓN, ENTRENAMIENTO Y SIMULACROS DE EMERGENCIA';
   pdf.text(tituloAzul,x0+38+(tw-38)/2,y+fH1/2,{align:'center',baseline:'middle'});
   y+=fH1;
 
   // DATOS DEL EMPLEADOR
   fill(GR);stroke(BK);pdf.rect(x0,y,tw,4,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('DATOS DEL EMPLEADOR',x0+1,y+2.8);
   y+=4;
 
@@ -770,7 +770,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   ['RAZÓN SOCIAL','RUC','DOMICILIO (Dirección, distrito, departamento, provincia)',
    'TIPO DE ACTIVIDAD ECONÓMICA','N° TRABAJADORES EN EL CENTRO LABORAL'].forEach((h,i)=>{
     fill(GR);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(h,eW[i]-2);
     const lineH=LH;
     const totalH=(ls.length-1)*lineH;
@@ -783,7 +783,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
    'AV. JORGE BASADRE NRO. 233 INT. 901 (ALT. CUADRA 01 JAVIER PRADO OESTE) LIMA - LIMA - SAN ISIDRO',
    '7020 - ACTIVIDADES DE CONSULTORÍA DE GESTIÓN',o.numT].forEach((d,i)=>{
     fill(WH);stroke(BK);pdf.rect(eX[i],y,eW[i],eH,'FD');
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(d,eW[i]-2);
     const lineH=LH;
     const totalH=(ls.length-1)*lineH;
@@ -795,7 +795,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // MARCAR X
   const mH=4; // mitad de 8
   fill(GR);stroke(BK);pdf.rect(x0,y,tw,mH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('MARCAR (X)',x0+tw/2,y+mH/2,{align:'center',baseline:'middle'});
   y+=mH;
   // Headers tipos — mismas 5 columnas que empresa
@@ -803,21 +803,21 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   for(let i=1;i<tW.length;i++)tX.push(tX[i-1]+tW[i-1]);
   ['INDUCCIÓN','CAPACITACIÓN','ENTRENAMIENTO','SIMULACRO DE EMERGENCIAS','OTROS'].forEach((t,i)=>{
     fill(GR);stroke(BK);pdf.rect(tX[i],y,tW[i],mH,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
     pdf.text(t,tX[i]+tW[i]/2,y+mH/2,{align:'center',baseline:'middle'});
   });
   y+=mH;
   // Valores X
   [o.xIn,o.xCap,o.xEnt,o.xSim,o.xOt].forEach((v,i)=>{
     fill(WH);stroke(BK);pdf.rect(tX[i],y,tW[i],mH,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
     pdf.text(v||'',tX[i]+tW[i]/2,y+mH/2,{align:'center',baseline:'middle'});
   });
   y+=mH;
 
  // TEMA
   const temaW1=38, temaW2=tw-38;
-  pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  pdf.setFont('times','normal');pdf.setFontSize(5.5);
   const temaRaw=o.tema.split('\n').filter(l=>l.trim());
   const temaLineas=[];
   temaRaw.forEach(linea=>{
@@ -830,10 +830,10 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const temaTextH=(temaLineas.length-1)*lineHT;
   const temaStartY=y+temaH/2-temaTextH/2;
   fill(GR);stroke(BK);pdf.rect(x0,y,temaW1,temaH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('TEMA:',x0+1,y+temaH/2,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+temaW1,y,temaW2,temaH,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
   temaLineas.forEach((linea,j)=>{
     const ty=temaStartY+j*lineHT;
     if(linea.esUltima){
@@ -858,22 +858,22 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   // FECHA y HORAS — alto 4
   const fHora=4;
   fill(GR);stroke(BK);pdf.rect(x0,y,38,fHora,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('FECHA:',x0+1,y+fHora/2,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+38,y,59,fHora,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
   pdf.text(o.fechaStr,x0+38+59/2,y+fHora/2,{align:'center',baseline:'middle'});
   fill(GR);stroke(BK);pdf.rect(x0+97,y,38,fHora,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('N° HORAS',x0+97+1,y+fHora/2,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+135,y,59,fHora,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
   pdf.text(`${o.horas} H.`,x0+135+59/2,y+fHora/2,{align:'center',baseline:'middle'});
   y+=fHora;
 
   // CAPACITADOR — alto automático
   const capW1=76, capW2=tw-76;
-  pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  pdf.setFont('times','normal');pdf.setFontSize(5.5);
   const capRaw=o.cap.split('\n').filter(l=>l.trim());
   const capLineas=[];
   capRaw.forEach(linea=>{
@@ -882,13 +882,13 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   });
   const capH=Math.max(4,capLineas.length*4);
   fill(GR);stroke(BK);pdf.rect(x0,y,capW1,capH,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   const capLbl=pdf.splitTextToSize('NOMBRE DEL CAPACITADOR O ENTRENADOR:',capW1-2);
   const capLblH=(capLbl.length-1)*LH;
   const capLblY=y+capH/2-capLblH/2;
   capLbl.forEach((l,j)=>pdf.text(l,x0+1,capLblY+j*LH,{baseline:'middle'}));
   fill(WH);stroke(BK);pdf.rect(x0+capW1,y,capW2,capH,'FD');
-  tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
    const capTotalH=(capLineas.length-1)*LH;
   const capStartY=y+capH/2-capTotalH/2;
   capLineas.forEach((l,j)=>pdf.text(l,x0+capW1+capW2/2,capStartY+j*LH,{align:'center',baseline:'middle'}));
@@ -913,7 +913,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     else{
       pdf.rect(pX[i],y,pW[i],pH,'FD');
     }
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
     const ls=pdf.splitTextToSize(h,pW[i]-2);
     const totalH=(ls.length-1)*LH;
     const startY=y+pH/2-totalH/2;
@@ -925,7 +925,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const prH=7;
   o.grupo.forEach((c,i)=>{
     const n=(o.pg-1)*20+i+1;
-    pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    pdf.setFont('times','normal');pdf.setFontSize(5.5);
     const nomLs=c?pdf.splitTextToSize(c.nom,pW[1]-2):[''];
     const carLs=c?pdf.splitTextToSize(c.cargo||'',pW[5]-2):[''];
     const filaH=prH; // altura siempre fija
@@ -939,7 +939,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
     pdf.line(pX[0],y+filaH,pX[0]+pW[0],y+filaH);
     // resto de columnas
     for(let j=1;j<pW.length;j++) pdf.rect(pX[j],y,pW[j],filaH,'S');
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
     // N°
     pdf.text(String(n),pX[0]+pW[0]/2,y+filaH/2,{align:'center',baseline:'middle'});
     if(c){
@@ -964,23 +964,23 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const respH=4;
   const respW=50;
   fill(AZ);stroke(BK);pdf.rect(x0,y,tw,respH,'FD');
-  tc(WH);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(WH);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('RESPONSABLE DEL REGISTRO',x0+tw/2,y+respH/2,{align:'center',baseline:'middle'});
   y+=respH;
 
   [['Nombre y Apellidos:',o.rNom],['Cargo:',o.rCar],['Fecha:',o.fechaStr]].forEach(([lbl,val])=>{
     fill(GR);stroke(BK);pdf.rect(x0,y,respW,respH,'FD');
-    tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
     pdf.text(lbl,x0+1,y+respH/2,{baseline:'middle'});
     fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,respH,'FD');
-    tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
+    tc(BK);pdf.setFont('times','normal');pdf.setFontSize(5.5);
     pdf.text(val,x0+respW+(tw-respW)/2,y+respH/2,{align:'center',baseline:'middle'});
     y+=respH;
   });
 
   // Firma — alto 12
   fill(GR);stroke(BK);pdf.rect(x0,y,respW,12,'FD');
-  tc(BK);pdf.setFont('helvetica','bold');pdf.setFontSize(5.5);
+  tc(BK);pdf.setFont('times','bold');pdf.setFontSize(5.5);
   pdf.text('Firma:',x0+1,y+6,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+respW,y,tw-respW,12,'FD');
 }
