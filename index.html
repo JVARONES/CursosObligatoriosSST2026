@@ -450,14 +450,16 @@ function getLogoJpeg(){
   if(LOGO_JPEG) return LOGO_JPEG;
   const imgEl=document.querySelector('.enc-logo img')||new Image();
   if(!imgEl.src||imgEl.src.length<100) return null;
+  const scale=0.5;
   const canvas=document.createElement('canvas');
-  canvas.width=imgEl.naturalWidth||400;
-  canvas.height=imgEl.naturalHeight||200;
+  canvas.width=(imgEl.naturalWidth||400)*scale;
+  canvas.height=(imgEl.naturalHeight||200)*scale;
   const ctx=canvas.getContext('2d');
   ctx.fillStyle='white';
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(imgEl,0,0);
-  LOGO_JPEG=canvas.toDataURL('image/jpeg',0.3); // 0.7 = calidad reducida
+  ctx.drawImage(imgEl,0,0,canvas.width,canvas.height);
+  LOGO_JPEG=canvas.toDataURL('image/jpeg',0.3);
+  console.log('Tamaño logo base64:',LOGO_JPEG.length);
   return LOGO_JPEG;
 }
   // ══ GENERAR FORMATO ══
