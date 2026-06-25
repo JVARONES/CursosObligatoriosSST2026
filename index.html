@@ -7,6 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -281,6 +282,10 @@ Med. Liliana Aparcana Jacobo - Médico Ocupacional</textarea>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
         Vista previa del registro
       </button>
+      <button class="btn-a" onclick="descargarTodos()" id="btnTodos" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Descargar todos los registros (ZIP)
+      </button>
     </div>
   </div>
 </div>
@@ -456,6 +461,7 @@ function filtrarPorFecha(){
   const p1=Math.min(filtrados.length,30),p2=Math.max(filtrados.length-30,0);
   h+=`<div class="info-box"><strong>Páginas:</strong> ${filtrados.length<=30?`1 página (${p1} participantes)`:`2 páginas · Pág 1: 30 · Pág 2: ${p2}`} · Total: <strong>${filtrados.length}</strong></div>`;
   tb.innerHTML=h;btn.disabled=false;
+  document.getElementById('btnTodos').disabled=false;
 }
 
 // ══ LOGO SVG INDRA ══
@@ -1062,7 +1068,81 @@ if(firmaBase64){
     }catch(e){}
   }
 }
+async function descargarTodos(){
+  if(!todos.length){toast('Carga un Excel primero','error');return}
+  const zip=new JSZip();
+  const anio=document.getElementById('anioReg').value;
+  const tema=document.getElementById('temaCap').value;
+  const cap=document.getElementById('capacitador').value;
+  const horas=document.getElementById('numHoras').value;
+  const numT=document.getElementById('numTrab').value;
+  const rNom=document.getElementById('respNom').value;
+  const rCar=document.getElementById('respCar').value;
+  const virt=document.getElementById('tipoVirt').checked;
+  const vl=virt?' (VIRTUAL)':'';
+  const xIn=document.getElementById('tipoIn').checked?'X'+vl:'';
+  const xCap=document.getElementById('tipoCap').checked?'X'+vl:'';
+  const xEnt=document.getElementById('tipoEnt').checked?'X'+vl:'';
+  const xSim=document.getElementById('tipoSim').checked?'X':'';
+  const xOt=document.getElementById('tipoOt').checked?'X':'';
+  const empVal=document.querySelector('input[name="empresa"]:checked').value;
+  const empData={
+    IP:{nom:'INDRA PERÚ S.A.',ruc:'20100123411'},
+    IT:{nom:'INDRA T & D S.A.C.',ruc:'20604487901'},
+    NK:{nom:'NUEK PAYMENTS PERÚ S.A.C.',ruc:'20374984838'}
+  };
+  const empNom=empData[empVal].nom;
+  const empRuc=empData[empVal].ruc;
 
+  // Agrupar por fecha y ordenar
+  const porFecha={};
+  todos.forEach(c=>{
+    if(!porFecha[c.fk])porFecha[c.fk]=[];
+    porFecha[c.fk].push(c);
+  });
+  const fechas=Object.keys(porFecha).sort();
+  fechas.forEach(fk=>{
+    porFecha[fk].sort((a,b)=>a.nom.localeCompare(b.nom,'es'));
+  });
+
+  toast(`Generando ${fechas.length} PDFs…`,'info');
+
+  let corrN=getC();
+
+  try{
+    const{jsPDF}=window.jspdf;
+    for(const fk of fechas){
+      const[fy,fm,fd]=fk.split('-').map(Number);
+      const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
+      const corrStr=String(corrN).padStart(3,'0')+' IP';
+      const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
+      const fn=`${String(fd).padStart(2,'0')}-${String(fm).padStart(2,'0')}-${fy}_${corrStr}.pdf`;
+      const grupo_fecha=porFecha[fk];
+      const totalPags=Math.ceil(grupo_fecha.length/20);
+      const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+      for(let pg=1;pg<=totalPags;pg++){
+        if(pg>1)pdf.addPage();
+        const grupo=[...grupo_fecha.slice((pg-1)*20,pg*20)];
+        while(grupo.length<20)grupo.push(null);
+        dibujarPagina(pdf,{pg,totalPags,numReg,corrStr,fechaStr,tema,cap,horas,numT,
+          rNom,rCar,xIn,xCap,xEnt,xSim,xOt,grupo,empNom,empRuc});
+      }
+      const pdfBytes=pdf.output('arraybuffer');
+      zip.file(fn,pdfBytes);
+      corrN++;
+    }
+    setC(corrN);
+    toast('Comprimiendo ZIP…','info');
+    const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`Registros_${anio}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast(`ZIP descargado: ${fechas.length} registros`,'success');
+  }catch(err){console.error(err);toast('Error: '+err.message,'error')}
+}
 function toast(msg,type='info'){
   const t=document.createElement('div');
   t.className=`toast ${type}`;
