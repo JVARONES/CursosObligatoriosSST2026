@@ -719,7 +719,7 @@ async function descargarPDF(){
   const fi=document.getElementById('fechaCapacitacion').value;
   const[fy,fm,fd]=fi.split('-').map(Number);
   const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
-  const fn=`${String(fd).padStart(2,'0')}-${String(fm).padStart(2,'0')}-${fy}_${corrStr}.pdf`;
+  const fn=`${fy}-${String(fm).padStart(2,'0')}-${String(fd).padStart(2,'0')}_${corrStr}.pdf`;
   const tema=document.getElementById('temaCap').value;
   const cap=document.getElementById('capacitador').value;
   const horas=document.getElementById('numHoras').value;
