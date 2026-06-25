@@ -1116,7 +1116,7 @@ async function descargarTodos(){
       const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
       const corrStr=String(corrN).padStart(3,'0')+' IP';
       const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
-      const fn=`${String(fd).padStart(2,'0')}-${String(fm).padStart(2,'0')}-${fy}_${corrStr}.pdf`;
+      const fn=`${fy}-${String(fm).padStart(2,'0')}-${String(fd).padStart(2,'0')}_${corrStr}.pdf`;
       const grupo_fecha=porFecha[fk];
       const totalPags=Math.ceil(grupo_fecha.length/20);
       const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
