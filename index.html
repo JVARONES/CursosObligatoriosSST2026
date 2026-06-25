@@ -225,11 +225,11 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
     <div class="fg full" style="margin-bottom:11px">
       <label>TIPO DE CAPACITACIÓN</label>
       <div class="tipo-row">
-        <label class="tipo-chk"><input type="checkbox" id="tipoIn" onchange="onTipoChange()"> Inducción</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoCap" checked onchange="onTipoChange()"> Capacitación</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoEnt" onchange="onTipoChange()"> Entrenamiento</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoSim" onchange="onTipoChange()"> Simulacro de emergencias</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoOt" onchange="onTipoChange()"> Otros</label>
+        <label class="tipo-chk"><input type="radio" name="tipoCap" id="tipoIn" onchange="onTipoChange()"> Inducción</label>
+        <label class="tipo-chk"><input type="radio" name="tipoCap" id="tipoCap" checked onchange="onTipoChange()"> Capacitación</label>
+        <label class="tipo-chk"><input type="radio" name="tipoCap" id="tipoEnt" onchange="onTipoChange()"> Entrenamiento</label>
+        <label class="tipo-chk"><input type="radio" name="tipoCap" id="tipoSim" onchange="onTipoChange()"> Simulacro de emergencias</label>
+        <label class="tipo-chk"><input type="radio" name="tipoCap" id="tipoOt" onchange="onTipoChange()"> Otros</label>
         <label class="tipo-chk" style="margin-left:10px"><input type="checkbox" id="tipoVirt" checked> Virtual</label>
       </div>
     </div>
@@ -242,7 +242,7 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
           <label class="tipo-chk" style="margin-left:4px">
             <input type="checkbox" id="usarHora" onchange="onUsarHoraChange()"> Usar hora específica
           </label>
-          <input type="time" id="horaEvento" style="display:none;width:120px">
+          <input type="time" id="horaEvento" style="display:none;width:150px" step="60">
         </div>
       </div>
     </div>
@@ -507,7 +507,11 @@ function getHorasStr(){
   const usar=document.getElementById('usarHora').checked;
   if(usar){
     const t=document.getElementById('horaEvento').value;
-    return t?t+' H.':'';
+    if(!t)return'';
+    const[hh,mm]=t.split(':').map(Number);
+    const ampm=hh>=12?'P.M.':'A.M.';
+    const h12=hh%12||12;
+    return`${String(h12).padStart(2,'0')}:${String(mm).padStart(2,'0')} ${ampm}`;
   }
   return document.getElementById('numHoras').value+' H.';
 }
