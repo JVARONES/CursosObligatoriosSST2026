@@ -676,7 +676,7 @@ async function descargarPDF(){
   toast('Generando PDF…');
   try{
     const{jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
     for(let pg=1;pg<=totalPags;pg++){
       if(pg>1) pdf.addPage();
       const grupo=[...filtrados.slice((pg-1)*20,pg*20)];
