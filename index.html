@@ -222,9 +222,29 @@ table.ui-t tbody td{padding:6px 7px;vertical-align:middle}
       <div class="fg"><label>AÑO</label><input type="number" id="anioReg" value="2026" min="2020" max="2099"></div>
       <div class="fg"><label>N° TRABAJADORES EN EL CENTRO</label><input type="text" id="numTrab" value="--"></div>
     </div>
+    <div class="fg full" style="margin-bottom:11px">
+      <label>TIPO DE CAPACITACIÓN</label>
+      <div class="tipo-row">
+        <label class="tipo-chk"><input type="checkbox" id="tipoIn" onchange="onTipoChange()"> Inducción</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoCap" checked onchange="onTipoChange()"> Capacitación</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoEnt" onchange="onTipoChange()"> Entrenamiento</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoSim" onchange="onTipoChange()"> Simulacro de emergencias</label>
+        <label class="tipo-chk"><input type="checkbox" id="tipoOt" onchange="onTipoChange()"> Otros</label>
+        <label class="tipo-chk" style="margin-left:10px"><input type="checkbox" id="tipoVirt" checked> Virtual</label>
+      </div>
+    </div>
     <div class="grid2" style="margin-bottom:12px">
       <div class="fg"><label>FECHA DE CAPACITACIÓN</label><input type="date" id="fechaCapacitacion" onchange="filtrarPorFecha()"></div>
-      <div class="fg"><label>N° HORAS</label><input type="number" id="numHoras" value="2" min="0.5" step="0.5"></div>
+      <div class="fg">
+        <label>N° HORAS / HORA DEL EVENTO</label>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <input type="number" id="numHoras" value="2" min="0.5" step="0.5" style="width:80px">
+          <label class="tipo-chk" style="margin-left:4px">
+            <input type="checkbox" id="usarHora" onchange="onUsarHoraChange()"> Usar hora específica
+          </label>
+          <input type="time" id="horaEvento" style="display:none;width:120px">
+        </div>
+      </div>
     </div>
     <div class="fg full" style="margin-bottom:11px">
       <label>TEMA</label>
@@ -237,17 +257,6 @@ Módulo IV: RIESGOS PSICOSOCIALES.</textarea>
       <label>NOMBRE DEL CAPACITADOR / ENTRENADOR</label>
       <textarea id="capacitador" rows="2">Ing. Marcia Cárdenas Medina - Supervisor Principal SST
 Med. Liliana Aparcana Jacobo - Médico Ocupacional</textarea>
-    </div>
-    <div class="fg full" style="margin-bottom:11px">
-      <label>TIPO DE CAPACITACIÓN</label>
-      <div class="tipo-row">
-        <label class="tipo-chk"><input type="checkbox" id="tipoIn"> Inducción</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoCap" checked> Capacitación</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoEnt"> Entrenamiento</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoSim"> Simulacro de emergencias</label>
-        <label class="tipo-chk"><input type="checkbox" id="tipoOt"> Otros</label>
-        <label class="tipo-chk" style="margin-left:10px"><input type="checkbox" id="tipoVirt" checked> Virtual</label>
-      </div>
     </div>
     <div class="grid2">
       <div class="fg"><label>RESPONSABLE — NOMBRE</label><input type="text" id="respNom" value="Joe Vincent Arones Rocha"></div>
@@ -441,6 +450,67 @@ const toYMD=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-$
 const fmtD=d=>d?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`:'';
 function animPb(){let w=0;const b=document.getElementById('progressBar');const iv=setInterval(()=>{w=Math.min(w+9,100);b.style.width=w+'%';if(w>=100)clearInterval(iv)},25)}
 
+  // ══ TIPO DE CAPACITACIÓN — autocompletar ══
+const TEMA_CAP=`Módulo I: IDENTIFICACIÓN DE PELIGROS Y EVALUACIÓN DE RIESGOS.\nMódulo II: RESPUESTA ANTE EMERGENCIAS (LCI, PA, Ev).\nMódulo III: ERGONOMÍA EN EL TRABAJO Y TELETRABAJO.\nMódulo IV: RIESGOS PSICOSOCIALES.`;
+const TEMA_IND=`INDUCCIÓN EN SEGURIDAD Y SALUD EN EL TRABAJO: POLÍTICA SST, RISST, OBJETIVOS SST Y MEDIDAS DE PREVENCIÓN SST`;
+const TEMA_SIM=`SIMULACRO NACIONAL MULTIPELIGRO - SEDE ---- (PISO ---)`;
+const CAP_MARCIA=`Ing. Marcia Cárdenas Medina - Supervisor Principal SST`;
+const CAP_AMBOS=`Ing. Marcia Cárdenas Medina - Supervisor Principal SST\nMed. Liliana Aparcana Jacobo - Médico Ocupacional`;
+
+function onTipoChange(){
+  const xIn=document.getElementById('tipoIn').checked;
+  const xCap=document.getElementById('tipoCap').checked;
+  const xEnt=document.getElementById('tipoEnt').checked;
+  const xSim=document.getElementById('tipoSim').checked;
+  const xOt=document.getElementById('tipoOt').checked;
+
+  if(xCap&&!xIn&&!xEnt&&!xSim&&!xOt){
+    document.getElementById('temaCap').value=TEMA_CAP;
+    document.getElementById('numHoras').value='2';
+    document.getElementById('capacitador').value=CAP_AMBOS;
+    setUsarHora(false);
+  } else if(xIn&&!xCap&&!xEnt&&!xSim&&!xOt){
+    document.getElementById('temaCap').value=TEMA_IND;
+    document.getElementById('numHoras').value='1';
+    document.getElementById('capacitador').value=CAP_MARCIA;
+    setUsarHora(false);
+  } else if(xEnt&&!xIn&&!xCap&&!xSim&&!xOt){
+    document.getElementById('temaCap').value='';
+    document.getElementById('numHoras').value='';
+    document.getElementById('capacitador').value='';
+    setUsarHora(false);
+  } else if(xSim&&!xIn&&!xCap&&!xEnt&&!xOt){
+    document.getElementById('temaCap').value=TEMA_SIM;
+    document.getElementById('numHoras').value='';
+    document.getElementById('capacitador').value='';
+    setUsarHora(true);
+  } else if(xOt&&!xIn&&!xCap&&!xEnt&&!xSim){
+    document.getElementById('temaCap').value='';
+    document.getElementById('numHoras').value='';
+    document.getElementById('capacitador').value='';
+    setUsarHora(false);
+  }
+}
+
+function setUsarHora(val){
+  document.getElementById('usarHora').checked=val;
+  onUsarHoraChange();
+}
+
+function onUsarHoraChange(){
+  const usar=document.getElementById('usarHora').checked;
+  document.getElementById('numHoras').style.display=usar?'none':'block';
+  document.getElementById('horaEvento').style.display=usar?'block':'none';
+}
+
+function getHorasStr(){
+  const usar=document.getElementById('usarHora').checked;
+  if(usar){
+    const t=document.getElementById('horaEvento').value;
+    return t?t+' H.':'';
+  }
+  return document.getElementById('numHoras').value+' H.';
+}
 // ══ FILTRAR ══
 function filtrarPorFecha(){
   const fi=document.getElementById('fechaCapacitacion').value;
@@ -540,7 +610,7 @@ function generarFormato(){
   const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
   const tema=document.getElementById('temaCap').value;
   const cap=document.getElementById('capacitador').value;
-  const horas=document.getElementById('numHoras').value;
+  const horas=getHorasStr();
   const numT=document.getElementById('numTrab').value;
   const rNom=document.getElementById('respNom').value;
   const rCar=document.getElementById('respCar').value;
@@ -722,7 +792,7 @@ async function descargarPDF(){
   const fn=`${fy}-${String(fm).padStart(2,'0')}-${String(fd).padStart(2,'0')}_${corrStr}.pdf`;
   const tema=document.getElementById('temaCap').value;
   const cap=document.getElementById('capacitador').value;
-  const horas=document.getElementById('numHoras').value;
+  const horas=getHorasStr();
   const numT=document.getElementById('numTrab').value;
   const rNom=document.getElementById('respNom').value;
   const rCar=document.getElementById('respCar').value;
@@ -937,7 +1007,7 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   pdf.text('N° HORAS',x0+97+1,y+fHora/2,{baseline:'middle'});
   fill(WH);stroke(BK);pdf.rect(x0+135,y,59,fHora,'FD');
   tc(BK);pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
-  pdf.text(`${o.horas} H.`,x0+135+59/2,y+fHora/2,{align:'center',baseline:'middle'});
+   pdf.text(o.horas,x0+135+59/2,y+fHora/2,{align:'center',baseline:'middle'});
   y+=fHora;
 
   // CAPACITADOR — alto automático
@@ -1074,7 +1144,7 @@ async function descargarTodos(){
   const anio=document.getElementById('anioReg').value;
   const tema=document.getElementById('temaCap').value;
   const cap=document.getElementById('capacitador').value;
-  const horas=document.getElementById('numHoras').value;
+  const horas=getHorasStr();
   const numT=document.getElementById('numTrab').value;
   const rNom=document.getElementById('respNom').value;
   const rCar=document.getElementById('respCar').value;
