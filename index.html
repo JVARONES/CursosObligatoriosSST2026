@@ -918,12 +918,10 @@ pdf.text('CÓDIGO: SGSST_INDRAGROUP_F 022',cx,y+2,{align:'right'});
   const prH=7;
   o.grupo.forEach((c,i)=>{
     const n=(o.pg-1)*20+i+1;
-    // calcular líneas de nombre y cargo para altura dinámica
     pdf.setFont('helvetica','normal');pdf.setFontSize(5.5);
     const nomLs=c?pdf.splitTextToSize(c.nom,pW[1]-2):[''];
     const carLs=c?pdf.splitTextToSize(c.cargo||'',pW[5]-2):[''];
-    const maxLs=Math.max(nomLs.length,carLs.length,1);
-    const filaH=Math.max(prH,maxLs*prH);
+    const filaH=prH; // altura siempre fija
     // dibujar celdas
     fill(WH);stroke(BK);
     // col N° sin borde derecho
