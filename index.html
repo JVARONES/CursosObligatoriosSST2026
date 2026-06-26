@@ -606,7 +606,9 @@ function getLogoJpeg(){
   // ══ GENERAR FORMATO ══
 function generarFormato(){
   const corrN=getC();
-  const corrStr=String(corrN).padStart(3,'0')+' IP';
+  const empVal=document.querySelector('input[name="empresa"]:checked').value;
+  const empSufijo={IP:'IP',IT:'TYD',NK:'NPP'};
+  const corrStr=String(corrN).padStart(3,'0')+' '+empSufijo[empVal];
   const anio=document.getElementById('anioReg').value;
   const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
   const fi=document.getElementById('fechaCapacitacion').value;
@@ -787,7 +789,9 @@ function cerrarPrev(){
 // ══ DESCARGAR PDF — jsPDF nativo ══
 async function descargarPDF(){
   const corrN=getC();
-  const corrStr=String(corrN).padStart(3,'0')+' IP';
+  const empVal2=document.querySelector('input[name="empresa"]:checked').value;
+  const empSufijo2={IP:'IP',IT:'TYD',NK:'NPP'};
+  const corrStr=String(corrN).padStart(3,'0')+' '+empSufijo2[empVal2];
   const anio=document.getElementById('anioReg').value;
   const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
   const fi=document.getElementById('fechaCapacitacion').value;
@@ -1188,7 +1192,7 @@ async function descargarTodos(){
     for(const fk of fechas){
       const[fy,fm,fd]=fk.split('-').map(Number);
       const fechaStr=`${String(fd).padStart(2,'0')}/${String(fm).padStart(2,'0')}/${fy}`;
-      const corrStr=String(corrN).padStart(3,'0')+' IP';
+      const corrStr=String(corrN).padStart(3,'0')+' '+{IP:'IP',IT:'TYD',NK:'NPP'}[empVal];
       const numReg=`${anio}-${String(corrN).padStart(3,'0')} SST`;
       const fn=`${fy}-${String(fm).padStart(2,'0')}-${String(fd).padStart(2,'0')}_${corrStr}.pdf`;
       const grupo_fecha=porFecha[fk];
